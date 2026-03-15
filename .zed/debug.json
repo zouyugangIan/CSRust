@@ -1,0 +1,21 @@
+[
+  {
+    "label": "Debug rust binary",
+    "adapter": "CodeLLDB",
+    "request": "launch",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "build": {
+      "command": "cargo",
+      "args": [
+        "build",
+        "--bin",
+        "rust"
+      ],
+      "cwd": "$ZED_WORKTREE_ROOT"
+    },
+    "program": "$ZED_WORKTREE_ROOT/target/debug/rust",
+    "sourceLanguages": [
+      "rust"
+    ]
+  }
+]

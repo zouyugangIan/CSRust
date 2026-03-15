@@ -1,0 +1,7 @@
+{
+  "dap": {
+    "CodeLLDB": {
+      "binary": "/home/zyg/.cursor/extensions/vadimcn.vscode-lldb-1.12.1/adapter/codelldb"
+    }
+  }
+}
