@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Read chapter 2 of The Rust Programming Language",
+    "completed": true
+  },
+  {
+    "name": "Practice ownership with small examples",
+    "completed": false
+  },
+  {
+    "name": "Extend this CLI with a delete command",
+    "completed": false
+  }
+]
