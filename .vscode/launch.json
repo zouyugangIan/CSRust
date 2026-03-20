@@ -5,27 +5,58 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug executable 'rust'",
+            "name": "Debug playground",
             "type": "lldb",
             "request": "launch",
             "cargo": {
                 "args": [
-                    "run",
-                    "--bin=rust"
+                    "build",
+                    "--package=playground",
+                    "--bin=playground"
                 ]
             },
             "args": []
         },
         {
-            "name": "Debug unit tests in executable 'rust'",
+            "name": "Debug example '01_shadowing'",
             "type": "lldb",
             "request": "launch",
             "cargo": {
                 "args": [
-                    "test",
-                    "--bin=rust"
+                    "build",
+                    "--package=playground",
+                    "--example=01_shadowing"
                 ]
-            }
+            },
+            "args": []
+        },
+        {
+            "name": "Debug guessing_game",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--package=guessing_game",
+                    "--bin=guessing_game"
+                ]
+            },
+            "args": []
+        },
+        {
+            "name": "Debug todo_cli (list)",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--package=todo_cli",
+                    "--bin=todo_cli"
+                ]
+            },
+            "args": [
+                "list"
+            ]
         }
     ]
 }
