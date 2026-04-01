@@ -126,3 +126,25 @@ fn complete_task(path: &Path, id: usize) -> io::Result<()> {
 
     Ok(())
 }
+
+fn delete_task(path: &Path, id: usize) -> io::Result<()> {
+    let mut tasks = read_tasks(path)?;
+
+    // if id == 0 || id > tasks.len() {
+    //     eprintln!("Invalid task id: {id}");
+    //     return Ok(());
+    // }
+
+    // if let Some(task) = tasks.get_mut(id - 1) {
+    //     if task.completed {
+    //         println!("Task is already complete: '{}'", task.name);
+    //         return Ok(());
+    //     }
+
+    //     task.completed = true;
+    //     println!("Completed task: '{}'", task.name);
+    //     write_tasks(path, &tasks)?;
+    // }
+
+    Ok(())
+}
