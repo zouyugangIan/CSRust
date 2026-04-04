@@ -31,6 +31,12 @@ enum Commands {
         /// Task ID shown in the list command.
         id: usize,
     },
+    DelName {
+        name: String,
+    },
+    DelId {
+        id: usize,
+    },
 }
 
 fn main() -> io::Result<()> {
@@ -41,6 +47,8 @@ fn main() -> io::Result<()> {
         Commands::Add { name } => add_task(&file_path, name)?,
         Commands::List => list_tasks(&file_path)?,
         Commands::Complete { id } => complete_task(&file_path, id)?,
+        Commands::DelName { name } => delete_by_name(&file_path, name)?,
+        Commands::DelId { id } => delete_by_id(&file_path, id)?,
     }
 
     Ok(())
@@ -127,24 +135,26 @@ fn complete_task(path: &Path, id: usize) -> io::Result<()> {
     Ok(())
 }
 
-fn delete_task(path: &Path, id: usize) -> io::Result<()> {
+fn delete_by_name(path: &Path, name: String) -> io::Result<()> {
     let mut tasks = read_tasks(path)?;
+    let Some(index) = tasks.iter().position(|task| task.name == name) else {
+        eprintln!("Task not found: '{name}'");
+        return Ok(());
+    };
 
-    // if id == 0 || id > tasks.len() {
-    //     eprintln!("Invalid task id: {id}");
-    //     return Ok(());
-    // }
+    let removed_task = tasks.remove(index);
+    println!("Deleted task: '{}'", removed_task.name);
+    write_tasks(path, &tasks)
+}
 
-    // if let Some(task) = tasks.get_mut(id - 1) {
-    //     if task.completed {
-    //         println!("Task is already complete: '{}'", task.name);
-    //         return Ok(());
-    //     }
+fn delete_by_id(path: &Path, id: usize) -> io::Result<()> {
+    let mut tasks = read_tasks(path)?;
+    if id <= 0 || id > tasks.len() {
+        eprintln!("Invalid task id: {id}");
+        return Ok(());
+    }
 
-    //     task.completed = true;
-    //     println!("Completed task: '{}'", task.name);
-    //     write_tasks(path, &tasks)?;
-    // }
-
-    Ok(())
+    let removed_task = tasks.remove(id - 1);
+    println!("Deleted task: '{}'", removed_task.name);
+    write_tasks(path, &tasks)
 }

@@ -1,313 +1,778 @@
-如果你的目标是“把非科班的专业课补到真正扎实”，而不是“最快刷题上岸”，那你以前那
-条 《编码》 -> 那本从俄罗斯方块到程序的书 -> 算法与数据结构 -> CSAPP 的顺序，
-现在已经不是最优了。
-
-以你 2026 年这个起点来看，你已经有 C# 和 Rust 基础，缺的不是“会不会写程序”，而
-是这几块专业底层能力：
-
-- C 和 Linux 工具链不够熟，导致 CSAPP / OS / 网络 一上来就卡在实现细节。
-- 离散数学 + 证明 + 渐进分析 不够扎实，导致算法只能“看懂”，不能“自己推”。
-- 组成原理 / 内存 / ABI / 虚拟内存 / 并发 这些系统抽象还没真正连起来。
-
-所以我给你的最佳主线不是旧路线，而是这条：
-
-C 与离散数学补齐 -> 数据结构与算法 -> 计算机系统/组成 -> 操作系统 -> 计算机网
-络 -> 数据库
-
-《编码》 和你说的那本“从俄罗斯方块到程序”的书，我推测大概率是 Nand to Tetris /
-The Elements of Computing Systems
-(https://www.nand2tetris.org/)。这两本/这一类材料现在更适合做“热身和建立直觉”
-，不适合继续当主线。
-
-先说结论
-最可行、也最扎实的节奏，是按 12-15 小时/周 走一个 12-15 个月 的计划。少于 8 小
-时/周会明显拉长；多于 18 小时/周可以压缩到 9-10 个月，但强度会比较大。对非科班
-又还在工作的成人学习者，12-15 小时/周 是最稳的。
-
-推荐路线
-下面这条是我认为最适合你当前背景的主线。核心原则是：每个阶段只保留 1 门主课 +
-1 个配套技能，不要并行开 4 门。
-
-| 阶段    |   时长 | 主目标                       | 主资源                | 阶段产出 |
-| ------- | -----: | ---------------------------- | --------------------- | -------- |
-| 0. 热身 | 2-3 周 | 建立硬件/系统直觉，补 C 环境 | 《编码》、Nand2Tetris |
-
-(https://www.nand2tetris.org/)、C Programming: A Modern Approach
-(https://www.cise.ufl.edu/~manuel/book/) | 能写基本 C 程序，理解门电路-CPU-汇
-编的链条 |
-| 1. 离散数学 | 6-8 周 | 证明、归纳、图、计数、概率 | MIT 6.042J Mathematics
-for Computer Science
-(https://openlearninglibrary.mit.edu/courses/course-v1%3AOCW%2B6.042J%2B2T2019
-/about)
-| 20-30 道手写证明题，建立不变量意识 |
-| 2. 数据结构与算法 | 10-12 周 | 常用数据结构 + 算法分析 + 基本图论/DP | MIT
-6.006 Introduction to Algorithms
-(https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/) |
-自己实现核心数据结构，能手推复杂度 |
-| 3. 计算机系统/组成 | 10-12 周 | 位、汇编、缓存、链接、进程、虚拟内存 | CSAPP
-3e
-(https://www.pearson.com/us/higher-education/product/redirected-product/978013
-4092669.html)
-| 读懂 C 到机器的映射，理解程序如何真正在机器上跑 |
-| 4. 操作系统 | 10-12 周 | 进程/线程、调度、虚拟内存、文件系统、锁 | OSTEP
-(https://pages.cs.wisc.edu/~remzi/OSTEP/)、MIT 6.1810
-(https://ocw.mit.edu/courses/6-1810-operating-system-engineering-fall-2023/pag
-es/syllabus/)
-| 做 xv6 实验，真正把 OS 抽象落到代码 |
-| 5. 计算机网络 | 6-8 周 | 分层、TCP/IP、拥塞控制、socket 编程 | Top-Down App
-roach 9e 资源页 (https://www-net.cs.umass.edu/kurose_ross/index.php)、Beej's
-Guide (https://beej.us/guide/bgnet/) | 写 socket 程序，抓包分析 TCP/HTTP |
-| 6. 数据库 | 8-10 周 | 关系模型、SQL、索引、事务、恢复 | CMU 15-445 Spring 2
-026 (https://15445.courses.cs.cmu.edu/spring2026/) | 理解 DBMS 内部结构，不只
-会写 SQL |
-| 7. 总复盘 | 3-4 周 | 把专业课重新串成一张图 | 自己的笔记与项目 | 一套自己
-的“专业课地图”和复习库 |
-
-为什么这样排
-你之前觉得 CSAPP 难，通常不是因为你不适合系统，而是因为它默认你已经具备了三件
-事：
-
-- 会 C
-- 不怕 抽象层切换
-- 能做 定量分析
-
-而很多非科班读者真正卡住的是：
-
-- 指针、数组、栈帧、字节序这些 C/机器细节
-- 不会把“汇编、缓存、进程、虚拟内存”当成一个系统去看
-- 没有做题习惯，只看书和视频
-
-所以，CSAPP 不应该是起点，也不该拖到很后面。最好的位置就是我上面放的 第 3 阶
-段：在你已经补了离散数学和算法分析、又刚学完 C 之后，再进入系统。
-
-每个阶段怎么学，才是真的“扎实”
-不是把视频看完，也不是把书翻完。每个阶段都按下面这个标准走：
-
-- 概念关：能不看资料，用自己的话讲清楚核心概念。
-- 题目关：能做书后题、习题课题、历年题或 quiz，而不是只会看答案。
-- 实现关：至少做一个能跑的项目/实验。
-- 总结关：把这一阶段压缩成 3-5 页自己的笔记。
-
-你只要缺其中一关，这门课就不能算“学扎实”。
-
-具体执行法
-这是最关键的部分。很多人路线对了，执行方式错了。
-
-1. 阶段 0：热身，不要沉迷
-
-   《编码》 现在对你仍然有价值，但价值在“建立整体感”，不是“当主教材”。
-   建议是：
-   - 《编码》 用 20-30 分钟/天 平行阅读，不做重笔记。
-   - 如果你说的那本书真是 Nand to Tetris，做它的 Part I 就够了，重点是逻辑
-     门、ALU、CPU、汇编器。
-   - 同时补 C：函数、指针、数组、结构体、malloc/free、文件 I/O、Make、gdb。
-
-   这一阶段最多 3 周，不能无限拖。你现在最缺的是系统训练，不是再看一轮“启蒙
-   书”。
-
-2. 阶段 1：离散数学必须硬做
-
-   这一阶段你会很想跳过，但不能跳。
-   真正影响你后面算法、操作系统、网络理解力的，是这部分：
-   - 命题、集合、函数、关系
-   - 数学归纳法
-   - 不变量
-   - 计数
-   - 图
-   - 模运算
-   - 基础离散概率
-
-   用 MIT 6.042J
-
-(https://openlearninglibrary.mit.edu/courses/course-v1%3AOCW%2B6.042J%2B2T2019
-/about)
-最合适，因为它就是面向 CS 的离散数学。
-这一阶段不要只听课，必须手写证明题。你真正要训练的是“如何把一句直觉，写成一
-个正确论证”。3. 阶段 2：算法阶段，主语言建议先用 C#
-
-     这是针对你背景的定制建议。
-     你有 Rust 基础，但如果现在拿 Rust 去硬写树、图、复杂所有权结构，很容易把精
-     力浪费在 borrow checker 上，而不是算法不变量本身。
-     所以我的建议是：
-      - 算法主实现语言用 C#
-      - Rust 只拿来复写 2-3 个代表性结构，比如 Vec/heap/hash map/union-find
-
-     这样你能同时兼顾“高效率学习算法”与“继续保留 Rust 视角”。
-
-     这一阶段必须手写和实现的内容至少包括：
-      - 动态数组、链表、栈、队列
-      - 哈希表
-      - 堆与优先队列
-      - 二叉搜索树、平衡树的概念
-      - 并查集
-      - BFS / DFS
-      - 最短路
-      - 基础动态规划
-      - 渐进复杂度、递归式、摊还分析的基本意识
-
-     我建议以 MIT 6.006
-     (https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/)
-     为主，而不是直接上更偏 Java 工程风格的路线。MIT 6.006 的好处是公开视频、讲
-     义、作业、测验都公开，结构完整，适合自学。
-
-4. 阶段 3：系统阶段，必须切到 C
-
-   这是你进入 CSAPP 的时机。
-   到这里，C 不再是“顺便学一下”，而是必须会。
-
-   你这一阶段的任务不是“把书读完”，而是打通下面这些链条：
-   - 数据表示 -> 位运算 -> 整数/浮点
-   - C 代码 -> 汇编 -> 调用约定 -> 栈帧
-   - 局部性 -> cache -> 性能
-   - 目标文件 -> 链接 -> 装载
-   - 进程 -> 虚拟内存 -> 系统调用
-   - I/O -> 网络 -> 并发
-
-   CSAPP 3e
-
-(https://www.pearson.com/us/higher-education/product/redirected-product/978013
-4092669.html)
-仍然是非常好的主教材。Pearson 当前页说明它的核心仍然是从“程序员视角”讲系统
-，而且 3e 以 x86-64 为基准，要求读者具备基本的 C/C++ 与 Linux 环境。对你现
-在正合适。
-
-     这一阶段要强制自己用 Linux 工具：
-      - gcc/clang
-      - gdb
-      - objdump
-      - nm
-      - strace
-      - perf
-      - sanitizers
-
-     这一步是把“会写程序”和“懂程序如何运行”分开的分水岭。
-
-5. 阶段 4：操作系统阶段，用 OSTEP + xv6 双线
-
-   只看 OS 书通常不够，因为你会停留在概念；只做 xv6 lab 也不够，因为你会变
-   成“照着改代码”。
-   最好的组合就是：
-   - 用 OSTEP (https://pages.cs.wisc.edu/~remzi/OSTEP/) 建立概念骨架
-   - 用 MIT 6.1810
-
-(https://ocw.mit.edu/courses/6-1810-operating-system-engineering-fall-2023/pag
-es/syllabus/)
-的 xv6 实验把它落到代码
-
-     OSTEP 官方页现在仍然是公开免费的，2023 年的版本页写得很清楚，它的三条主线就
-     是 virtualization / concurrency / persistence。这个框架非常适合自学者。
-     MIT 6.1810 的 2023 OCW 版本则明确说明：课程围绕 xv6，实验包括虚拟内存、系统
-     调用、文件系统、锁和网络扩展。这正是把概念变成能力的最佳路径。
-
-     如果这一阶段你真的做下来了，你的系统基础会有质变。
-
-6. 阶段 5：网络阶段，先“会解释”，再“会编程”
-
-   网络最容易出现一种假扎实：会背 TCP 三次握手，但不会抓包；会背分层，但没写过
-   socket。
-   所以我的建议是：
-   - 理论主线用 Computer Networking: A Top-Down Approach 9th edition
-
-   我特地确认了作者官网，Top-Down 的 9th edition 是 2025 年夏天 发布的，到
-   - 用 Wireshark 抓 HTTP / DNS / TCP 包
-   - 用 C 写 socket 程序
-
-   - 至少写一个简单 HTTP server 或 chat server
-
-   你写过以后，再去看拥塞控制、可靠传输、滑动窗口，理解会完全不一样。
-
-7. 阶段 6：数据库阶段，别停在“会 SQL”
-
-   很多人觉得数据库就是增删改查，这对“专业课扎实”来说完全不够。
-   真正的数据库核心是：
-   - 关系模型
-   - 范式与设计
-   - 存储
-   - 索引
-   - 查询执行
-   - 优化
-   - 事务
-   - 并发控制
-   - 恢复
-
-   CMU 15-445 的 Spring 2026 页面
-   (https://15445.courses.cs.cmu.edu/spring2026/) 现在明确写着：课程覆盖 data
-   models / storage / indexes / transaction processing / recovery / query pro
-   cessing / parallel architectures，并且适合已经具备 systems programming ski
-   lls 的学生。
-   所以它不应该放在前面，而应该放在你完成系统和 OS 之后。
-
-每周怎么安排最稳
-如果你每周能给 12-15 小时，我建议固定成这个结构：
-
-- 2 次理论学习：每次 1.5-2 小时，读书或看课。
-- 2 次题目训练：每次 1.5-2 小时，只做题，不看视频。
-- 1 次长实验/项目：4-5 小时。
-- 1 次复盘：1 小时，把本周内容压成一页笔记。
-
-最重要的不是总时长，而是要有“闭环”：
-
-输入 -> 题目 -> 代码 -> 总结
-
-没有这四步闭环，知识会一直停留在“我看过”。
-
-什么叫“能进入下一阶段”
-每阶段结束时，你用下面四条自测：
-
-- 能不用书讲清楚本阶段 5 个核心概念。
-- 能在限时下做出 60%-70% 的典型题。
-- 有一个自己敲出来、能运行的项目/实验。
-- 有一份 3-5 页的个人总结。
-
-四条里少两条以上，就不要急着进入下一门。
-
-你最需要避免的坑
-这部分我直说。
-
-- 不要把 《编码》 当成主线教材。它很好，但现在对你只是热身。
-- 不要把 Rust 当成算法阶段的唯一实现语言。你会被语言机制拖慢。
-- 不要跳过 C。想学系统，C 不是可选项。
-- 不要只看视频。看懂和会做不是一回事。
-- 不要把 LeetCode 当“算法课”。它是训练场，不是体系课。
-- 不要同时并行 算法 + CSAPP + OS + 网络。非科班自学最容易死在这里。
-- 不要为了快而牺牲“手写证明”和“亲手做实验”。这两件事最痛，但也最值。
-
-如果让我替你做取舍
-我会这样定：
-
-- 《编码》：保留，但降级为睡前读物。
-- Nand2Tetris：保留，但只做前半段或选做项目，作为系统直觉桥梁。
-- 算法与数据结构：升为第一主线。
-- CSAPP：放到算法之后、OS之前。
-- OS/网络/数据库：都要学，但必须在系统基础起来之后进入。
-
-这条路线的本质不是“书单更好”，而是它符合知识依赖关系。你以前那条路线更像“启蒙
-型路线”；你现在需要的是“本科核心课补完路线”。
-
-我参考的官方材料
-这些是我这次专门查过、到 2026 年仍然适合作为主线的资料：
-
-- MIT 6.042J Mathematics for Computer Science
-  (https://openlearninglibrary.mit.edu/courses/course-v1%3AOCW%2B6.042J%2B2T2019/about)
-- MIT 6.006 Introduction to Algorithms
-  (https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/)
-- Nand to Tetris 官方站 (https://www.nand2tetris.org/)
-- CSAPP 3e 官方教材页
-  (https://www.pearson.com/us/higher-education/product/redirected-product/9780134092669.html)
-- OSTEP 官方站 (https://pages.cs.wisc.edu/~remzi/OSTEP/)
-- MIT 6.1810 Operating System Engineering OCW
-  (https://ocw.mit.edu/courses/6-1810-operating-system-engineering-fall-2023/pages/syllabus/)
-- Computer Networking: A Top-Down Approach 作者官网，9th edition 已于 2025 年
-  夏发布 (https://www-net.cs.umass.edu/kurose_ross/index.php)
-- Beej's Guide to Network Programming (https://beej.us/guide/bgnet/)
-- CMU 15-445 Spring 2026 (https://15445.courses.cs.cmu.edu/spring2026/)
-- C Programming: A Modern Approach 参考页
-  (https://www.cise.ufl.edu/~manuel/book/)
-
-如果你愿意，我下一条可以直接给你一份按你每周可投入时间定制的版本，比如：
-
-1. 每周 8 小时 的 18 个月计划
-2. 每周 12 小时 的 12 个月计划
-3. 每周 20 小时 的 8-9 个月强化计划
-
-我也可以把它继续细化成“第 1-12 周每周学什么、做什么题、写什么代码”的周计划。
+# Rust -> AI 行动方案总结（2026-04 执行版）
+
+## 1. 文档定位
+
+这不是一份泛泛而谈的路线图，也不是一份只会堆书单的收藏夹。
+
+这是一份可执行的行动方案，目标是把你当前这个 Rust workspace，逐步推进成：
+
+- 一个真正能承载长期学习与项目演进的 Rust 工程仓库
+- 一条从 Rust 基础到 Rust 工程，再到 Rust AI 的成长路径
+- 一组能形成作品集的阶段性项目，而不是散乱 demo
+
+核心要求只有一句话：
+
+`稳中求快`
+
+也就是：
+
+- 不能一开始就冲太深，导致基础不稳、项目烂尾
+- 也不能无限补基础，始终不进入工程与 AI 场景
+
+正确做法是：每个阶段只抓主线、持续交付、不断把学习沉淀回这个仓库。
+
+## 2. 先说结论
+
+如果只保留一条最优主线，我建议这样走：
+
+`Rust 语言与工程基本功 -> Rust 工程化与服务端 -> AI 基础闭环 -> Rust AI 应用与推理工程 -> 选择一个高价值方向做深`
+
+这条线比“先把全部传统 CS 补完再做 AI”更快，也比“直接冲 LLM 热点”更稳。
+
+2026-04 这个时间点下，最现实的判断是：
+
+- Rust 应该是你的长期主战语言
+- AI 不应该只理解为“训练模型”
+- 对你最有成长性的组合，是 `Rust 负责工程主干 + 适度借用 Python/Hub/现成模型生态`
+
+一句话总结：
+
+先成为强 Rust 工程师，再成为懂 AI 系统的 Rust 工程师。
+
+## 3. 当前仓库的现实起点
+
+从仓库现状看，你已经跨过了最开始的“不会写 Rust”阶段：
+
+- 已有 Cargo workspace
+- 已有 `playground`、`guessing_game`、`todo_cli`
+- 已能完成基础语法和小工具练习
+
+但下一阶段的缺口也很明显：
+
+- 语言能力还没有到“稳定设计数据与模块边界”
+- 工程能力还没有形成测试、错误处理、日志、配置、分层习惯
+- 服务能力还没有进入 `tokio` / `axum` / `sqlx`
+- AI 能力还没有形成 `数据 -> 检索/推理 -> 评测 -> 服务化` 的闭环
+
+所以现在最该做的，不是继续堆更多零散示例，而是把仓库升级成一条递进式成长路径。
+
+## 4. 总路线图
+
+默认节奏按每周 12-15 小时设计，这是“稳中求快”的推荐区间。
+
+| 阶段 | 时长 | 主目标 | 关键产出 |
+| --- | ---: | --- | --- |
+| 0. 地基重置 | 1-2 周 | 建立 2026 风格的 Rust 工程底座 | 统一工具链、质量门槛、学习节奏 |
+| 1. Rust 核心深化 | 4-6 周 | 把语言能力从“能写”升级到“能设计” | 2-3 个主题 lab + 1 个像样的 CLI |
+| 2. 工程化进阶 | 4-6 周 | 建立测试、错误处理、日志、文档习惯 | 可维护的中小型 crate |
+| 3. 服务与系统能力 | 6-8 周 | 进入 async/http/db/并发/性能基础 | 1 个可运行 API 服务 |
+| 4. AI 基础闭环 | 6-8 周 | 打通 tokenizer/embedding/retrieval/eval 概念链 | 1 个检索或 embedding demo |
+| 5. Rust AI 实战 | 6-8 周 | 做出完整 AI 应用最小闭环 | 1 个可演示 Rust AI MVP |
+| 6. 高成长专精 | 8-12 周 | 形成自己的技术护城河 | 1 个可进入作品集的代表项目 |
+
+如果你每周只有 8-10 小时，这条路线拉长到 12-15 个月更合理。
+
+如果你每周能稳定投入 16-20 小时，可以压缩到 7-9 个月，但不建议同时开太多线。
+
+## 5. 资源使用原则
+
+### 5.1 每个阶段只保留三类主资源
+
+每个阶段只保留：
+
+- 1 组主文档
+- 1 个主仓库
+- 1 本主书或主课程
+
+否则你会掉进最典型的坑：
+
+- 文档看很多，但没有主线
+- 仓库 clone 很多，但没读进去
+- 书买很多，但没有项目产出
+
+### 5.2 文档、仓库、书分别怎么用
+
+- 文档：用来建立正确 API 心智和最佳实践，不要只看二手博客
+- 仓库：用来学习目录结构、测试写法、模块边界、真实代码风格
+- 书：用来补系统性和深层解释，不负责替代项目实践
+
+### 5.3 不要“平行推很多资源”
+
+正确节奏是：
+
+`一本主书/课程 + 一组官方文档 + 一个主仓库 + 你自己的阶段项目`
+
+### 5.4 读仓库的正确姿势
+
+不是一上来通读全部代码，而是按下面顺序：
+
+1. 先看 README / docs / examples
+2. 再看 `Cargo.toml` 与 crate 划分
+3. 再看 `src/lib.rs` / `src/main.rs` / `bin/`
+4. 再看 tests / examples
+5. 最后再深入内部实现
+
+### 5.5 书不是全都要从头读到尾
+
+不同资源定位不同：
+
+- 入门书：按顺序读
+- 中级书：按主题挑章节
+- 仓库：按问题驱动去读
+- 官方文档：按项目需求反复查
+
+## 6. 阶段执行方案与具体资源
+
+下面这一节回答两个问题：
+
+- 具体怎么做
+- 学哪些仓库、文档或书
+
+---
+
+### 阶段 0：地基重置（1-2 周）
+
+#### 目标
+
+- 统一 Rust 2024 edition 心智
+- 建立稳定开发环境
+- 把这个仓库从“练习堆积”改成“阶段成长容器”
+
+#### 必学主题
+
+- `rustup`、toolchain、stable/beta/nightly 的区别
+- Cargo workspace
+- `cargo fmt`、`cargo clippy`、`cargo test`
+- Rust 2024 edition 的基本变化
+- IDE 与 `rust-analyzer`
+
+#### 主文档
+
+- [The Rust Programming Language](https://doc.rust-lang.org/book/title-page.html)
+  - 重点先读第 1-7 章和附录 D
+- [The Cargo Book](https://doc.rust-lang.org/cargo/)
+- [Rust 2024 Edition Guide](https://doc.rust-lang.org/edition-guide/rust-2024/index.html)
+- [Rust release notes](https://doc.rust-lang.org/stable/releases.html)
+  - 重点只看 1.85.0 起的 edition 相关变化即可
+
+#### 主仓库
+
+- [rust-lang/rustlings](https://github.com/rust-lang/rustlings)
+
+#### 主书
+
+- 主书就是 [The Rust Programming Language](https://doc.rust-lang.org/book/title-page.html)
+  - 纸质版可选，但官方在线版优先
+
+#### 执行方式
+
+1. 先更新本机 Rust stable，明确后续项目默认按 `edition = "2024"` 思路写
+2. 用 3-5 天快速复习 Rust Book 的前半部分，不做重笔记，只做自己的关键错点记录
+3. 并行做 Rustlings，重点不是刷完，而是暴露自己在 ownership、enum、error handling 上的真实薄弱点
+4. 回到本仓库，整理 workspace 规则和质量门槛
+
+#### 仓库动作
+
+- 明确哪些 crate 是示例，哪些 crate 是项目
+- 后续新增 crate 前，先定义命名规则和目标说明
+- 固定开发基线：
+  - `cargo fmt`
+  - `cargo clippy --workspace --all-targets --all-features -- -D warnings`
+  - `cargo test --workspace`
+
+#### 进入下一阶段的标准
+
+- 你能在 30 分钟内从零建一个小 crate，并配好格式化、lint、测试
+- 你能说清 `ownership`、`borrowing`、`Result`、workspace、edition 的基本含义
+
+---
+
+### 阶段 1：Rust 核心深化（4-6 周）
+
+#### 目标
+
+- 从“知道语法”进入“会设计数据和模块”
+- 把 borrow checker 从障碍变成设计反馈器
+
+#### 必学主题
+
+- ownership / borrowing / lifetimes
+- `Option` / `Result`
+- pattern matching
+- trait / generic / iterator
+- 标准库集合
+- 模块边界与 crate 组织
+- 测试与文档测试
+
+#### 主文档
+
+- [Rust By Example](https://doc.rust-lang.org/rust-by-example/)
+- [The Rust Reference](https://doc.rust-lang.org/reference/)
+  - 这不是起步教材，而是遇到语言细节时的权威查询手册
+- [The Rust Programming Language](https://doc.rust-lang.org/book/title-page.html)
+  - 重点继续读第 8-13 章、第 15-18 章
+
+#### 主仓库
+
+- [rust-lang/rustlings](https://github.com/rust-lang/rustlings)
+
+#### 主书
+
+- [Rust for Rustaceans](https://rust-for-rustaceans.com/)
+  - 这是你从“入门者”走向“中级 Rust 使用者”的第一本值得认真读的书
+
+#### 可选补充书
+
+- [Programming Rust, 2nd Edition](https://www.oreilly.com/library/view/programming-rust-2nd/9781492052586/)
+  - 适合作为更厚、更系统的中高级参考书
+
+#### 执行方式
+
+1. 不要重新从头学语法，直接按主题推进
+2. 每个主题都做一个最小 lab，而不是只写单文件片段
+3. 每学完一个主题，必须做一次“概念解释 + 代码验证 + 总结”
+
+#### 推荐主题与本仓库落地
+
+- `ownership_lab`
+  - 所有权转移、借用、切片、结构体方法
+- `error_lab`
+  - `Result`、错误传播、应用层错误 vs 库层错误
+- `collections_lab`
+  - `Vec`、`HashMap`、`BTreeMap`、迭代器链式处理
+
+#### 本阶段最该读的现有代码
+
+- 先重读你自己的 [crates/todo_cli/src/main.rs](/run/media/zyg/OpenV/Projects/rust/crates/todo_cli/src/main.rs)
+- 思考：
+  - 哪些逻辑应该抽到 `lib.rs`
+  - 哪些错误处理不够清晰
+  - 哪些职责耦合太重
+
+#### 进入下一阶段的标准
+
+- 你能独立写一个中等复杂度 CLI
+- 你能把主要逻辑放进库层而不是全塞进 `main.rs`
+- 遇到借用报错时，大多数情况能通过数据设计解决
+
+---
+
+### 阶段 2：工程化进阶（4-6 周）
+
+#### 目标
+
+- 从“能跑”升级到“可维护、可测试、可扩展”
+
+#### 必学主题
+
+- 错误处理
+- CLI 设计
+- 序列化与配置
+- 日志与可观测性
+- 单元测试 / 集成测试 / 样例测试
+- crate 对外 API 的组织方式
+
+#### 主文档
+
+- [clap docs](https://docs.rs/clap/latest/clap/)
+- [serde docs](https://docs.rs/serde/latest/serde/)
+- [tracing-subscriber docs](https://docs.rs/tracing-subscriber)
+- [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/checklist.html)
+- [cargo-nextest](https://nexte.st/)
+- [cargo-deny](https://embarkstudios.github.io/cargo-deny/)
+
+#### 主仓库
+
+- [LukeMathWalker/wiremock-rs](https://github.com/LukeMathWalker/wiremock-rs)
+  - 用来学测试友好的 HTTP mock 思路
+
+#### 主书
+
+- [Command-Line Rust](https://www.oreilly.com/library/view/command-line-rust/9781098109424/)
+
+#### 工程库建议
+
+- 应用层错误：`anyhow`
+- 库层错误：`thiserror`
+- CLI：`clap`
+- 日志：`tracing` + `tracing-subscriber`
+
+#### 执行方式
+
+1. 以 `todo_cli` 为主项目做第一次像样重构
+2. 目标不是“加很多功能”，而是建立工程习惯
+3. 每做一步改动都问自己：
+  - 这个逻辑是否可测试
+  - 这个错误是否可理解
+  - 这个模块是否职责单一
+
+#### `todo_cli` 改造建议
+
+- 从单文件改成 `lib + bin`
+- 抽出存储层
+- 抽出命令执行层
+- 增加测试
+- 把输出层和业务层分开
+- 允许后续替换 JSON 存储
+
+#### 本阶段重点不是
+
+- 花哨架构
+- 复杂 trait 抽象
+- 提前设计一堆通用框架
+
+#### 进入下一阶段的标准
+
+- 你能把一个小工具写到“别人能快速看懂、能运行、能改”的水平
+- 你已经不再依赖到处散落的 `unwrap` / `expect`
+
+---
+
+### 阶段 3：服务与系统能力（6-8 周）
+
+#### 目标
+
+- 真正进入 Rust 工程主战场
+- 学会写一个可运行、可调试、可测试的 API 服务
+
+#### 必学主题
+
+- async/await 心智模型
+- `tokio`
+- `axum`
+- `sqlx`
+- 数据库 schema / migration / query
+- 共享状态、取消、超时、重试
+- 基础性能意识
+
+#### 主文档
+
+- [Tokio tutorial](https://tokio.rs/tokio/tutorial)
+- [Async Book](https://rust-lang.github.io/async-book/)
+  - 说明：官方书目前处于重写过程中，适合补原理，不适合当唯一入口
+- [axum docs](https://docs.rs/crate/axum/latest)
+- [sqlx docs](https://docs.rs/crate/sqlx/latest)
+- [tracing docs](https://docs.rs/tracing/latest/tracing/)
+
+#### 主仓库
+
+- [tokio-rs/mini-redis](https://github.com/tokio-rs/mini-redis)
+
+#### 第二参考仓库
+
+- [launchbadge/realworld-axum-sqlx](https://github.com/launchbadge/realworld-axum-sqlx)
+
+#### 主书
+
+- [Zero To Production In Rust](https://www.zero2prod.com/assets/sample_zero2prod.pdf)
+- 对应代码仓库：[LukeMathWalker/zero-to-production](https://github.com/LukeMathWalker/zero-to-production)
+
+#### 补充书
+
+- [Rust Atomics and Locks](https://mara.nl/atomics/)
+  - 这本书在线可读，适合在你开始接触并发和共享状态后插入学习
+
+#### 执行顺序
+
+1. 先完整跑一遍 Tokio tutorial 的核心章节
+2. 再读 `mini-redis`，重点学：
+   - 任务模型
+   - 共享状态
+   - 通道
+   - graceful shutdown
+3. 然后写你自己的第一个 API 服务
+4. 再借 `realworld-axum-sqlx` 看项目结构与分层
+5. 最后用 `Zero To Production` 补测试、配置、观测、部署思路
+
+#### 本仓库建议新增项目
+
+- `task_api`
+  - REST API
+  - 数据库存储
+  - tracing
+  - migration
+  - 最小集成测试
+
+#### 进入下一阶段的标准
+
+- 你能独立完成一个 API 服务
+- 你知道为什么不能把阻塞操作直接塞进 async 主路径
+- 你开始对日志、配置、测试和数据库 schema 有工程意识
+
+---
+
+### 阶段 4：AI 基础闭环（6-8 周）
+
+#### 目标
+
+- 不再把 AI 理解成“调一个模型接口”
+- 打通最小 AI 概念链：数据、token、embedding、检索、生成、评测
+
+#### 必学主题
+
+- 向量、相似度、embedding 的最低必要数学
+- tokenization
+- retrieval vs rerank vs generation
+- 数据清洗、切分、索引
+- 评测与失败分析
+
+#### 主文档 / 主课程
+
+- [Hugging Face NLP Course](https://huggingface.co/learn/nlp-course)
+  - 重点是 tokenizer、datasets、基础 Transformer/LLM 工作流
+- [Google Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course)
+  - 用来补最低必要的 ML 概念
+- [Dive into Deep Learning](https://d2l.ai/)
+  - 如果你觉得自己的 DL 基础明显不足，再选读相关章节
+
+#### Rust 侧主文档
+
+- [Tokenizers docs](https://huggingface.co/docs/tokenizers/main/en/index)
+- [tokenizers crate docs](https://docs.rs/crate/tokenizers/latest)
+- [safetensors crate docs](https://docs.rs/crate/safetensors/latest)
+- [Polars user guide](https://docs.pola.rs/)
+
+#### 主仓库
+
+- `huggingface/tokenizers`
+- `huggingface/safetensors`
+
+#### 执行方式
+
+1. 先用课程和文档建立概念，不着急本地推理
+2. 先做“检索式 AI”而不是“自己训练模型”
+3. 先把数据流做出来：
+   - 输入文档
+   - 切块
+   - tokenizer/embedding
+   - 相似度检索
+   - 输出结果
+   - 简单评测
+
+#### 本仓库建议新增项目
+
+- `embedding_demo`
+  - 读取本地文档
+  - 切块
+  - 生成 embedding
+  - 做最小检索
+
+#### 为什么这一阶段先不重压本地模型
+
+- 本地模型推理会引入模型格式、后端、硬件、量化、内存占用等复杂性
+- 你现在最需要先学清楚“AI 应用为什么有用、在哪里失真、如何评估”
+
+#### 进入下一阶段的标准
+
+- 你能清楚解释 tokenizer、embedding、检索、生成之间的区别
+- 你能做出一个最小 RAG/检索 demo
+- 你知道“感觉效果不错”不等于“完成评测”
+
+---
+
+### 阶段 5：Rust AI 实战（6-8 周）
+
+#### 目标
+
+- 把 Rust 与 AI 真正结合起来
+- 做出可演示、可扩展的 Rust AI MVP
+
+#### 必学主题
+
+- 模型接入
+- 权重格式
+- 本地推理 vs 外部 API
+- 推理服务化
+- 模型缓存、批处理、吞吐与延迟的基本意识
+
+#### 主文档
+
+- [Candle integration docs](https://huggingface.co/docs/transformers/community_integrations/candle)
+- [huggingface/candle](https://github.com/huggingface/candle)
+- [The Burn Book](https://burn.dev/books/burn/)
+- [tracel-ai/burn](https://github.com/tracel-ai/burn)
+- [ort crate docs](https://docs.rs/crate/ort/latest)
+
+#### 主仓库
+
+- [huggingface/candle](https://github.com/huggingface/candle)
+
+#### 第二参考仓库
+
+- [tracel-ai/burn](https://github.com/tracel-ai/burn)
+
+#### 如何选技术路线
+
+- 如果你的目标是尽快做产品级 AI 应用：
+  - 先用模型 API
+  - Rust 负责服务、流程、工具、检索、评测、观测
+- 如果你的目标是进入 Rust AI 系统深水区：
+  - 逐步学习 Candle / ONNX Runtime / Burn
+
+#### Candle / Burn / ONNX Runtime 的定位
+
+- Candle：
+  - 更适合本地推理、模型接入、理解 Rust 侧推理框架
+- Burn：
+  - 更适合需要训练、模型导入、想系统了解 Rust DL 框架时
+- ONNX Runtime Rust：
+  - 更适合工程落地、模型复用和稳定推理接入
+
+#### 推荐执行顺序
+
+1. 用外部模型 API 先做通路
+2. 把检索、工具调用、评测和服务骨架做稳
+3. 再把局部组件替换为本地 embedding 或本地推理
+4. 最后再深入 Candle / Burn / ORT 的更底层能力
+
+#### 本仓库建议新增项目
+
+- `rag_service`
+- `embedding_worker`
+- `model_runner`
+
+#### 进入下一阶段的标准
+
+- 你已经有一个可演示、可讲架构、可继续扩展的 Rust AI 项目
+- 你不再把“AI”理解成一个神秘 API，而是一个可工程化系统
+
+---
+
+### 阶段 6：高成长专精（8-12 周）
+
+#### 目标
+
+- 选一条成长上限高的方向做深
+- 做出真正有辨识度的作品集项目
+
+#### 可选方向 A：AI 应用后端
+
+适合资源：
+
+- [Zero To Production In Rust](https://www.zero2prod.com/assets/sample_zero2prod.pdf)
+- [launchbadge/realworld-axum-sqlx](https://github.com/launchbadge/realworld-axum-sqlx)
+- [Tokio tutorial](https://tokio.rs/tokio/tutorial)
+
+适合做的项目：
+
+- 多租户 AI API
+- 任务编排与队列
+- 鉴权、配额、评测、日志、审计
+
+#### 可选方向 B：推理与性能
+
+适合资源：
+
+- [huggingface/candle](https://github.com/huggingface/candle)
+- [ort crate docs](https://docs.rs/crate/ort/latest)
+- [Rust Atomics and Locks](https://mara.nl/atomics/)
+
+适合做的项目：
+
+- 本地推理服务
+- 模型缓存、批处理、吞吐优化
+- 低延迟推理 API
+
+#### 可选方向 C：数据基础设施
+
+适合资源：
+
+- [Polars user guide](https://docs.pola.rs/)
+- [Apache DataFusion docs](https://datafusion.apache.org/index.html)
+
+适合做的项目：
+
+- 文档清洗与切分流水线
+- embedding ETL
+- 检索索引构建工具
+
+#### 选择原则
+
+- 优先选你愿意长期做作品集的方向
+- 优先选能和 Rust 优势真正结合的方向
+- 不要只追“最热名词”，要追“你能持续积累的系统能力”
+
+## 7. 2026-04 推荐资源总清单
+
+这部分只列我认为值得进入主线的资源，不追求大全。
+
+### Rust 基础与语言
+
+- [The Rust Programming Language](https://doc.rust-lang.org/book/title-page.html)
+- [Rust By Example](https://doc.rust-lang.org/rust-by-example/)
+- [The Rust Reference](https://doc.rust-lang.org/reference/)
+- [The Cargo Book](https://doc.rust-lang.org/cargo/)
+- [Rust 2024 Edition Guide](https://doc.rust-lang.org/edition-guide/rust-2024/index.html)
+- [rust-lang/rustlings](https://github.com/rust-lang/rustlings)
+
+### Rust 中级到高级
+
+- [Rust for Rustaceans](https://rust-for-rustaceans.com/)
+- [Programming Rust, 2nd Edition](https://www.oreilly.com/library/view/programming-rust-2nd/9781492052586/)
+- [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/checklist.html)
+- [Rust Atomics and Locks](https://mara.nl/atomics/)
+
+### Rust 工程化与 CLI
+
+- [Command-Line Rust](https://www.oreilly.com/library/view/command-line-rust/9781098109424/)
+- [clap docs](https://docs.rs/clap/latest/clap/)
+- [serde docs](https://docs.rs/serde/latest/serde/)
+- [tracing-subscriber docs](https://docs.rs/tracing-subscriber)
+- [wiremock docs](https://docs.rs/wiremock/latest/wiremock/)
+- [cargo-nextest](https://nexte.st/)
+- [cargo-deny](https://embarkstudios.github.io/cargo-deny/)
+
+### Rust 服务端与 async
+
+- [Tokio tutorial](https://tokio.rs/tokio/tutorial)
+- [tokio-rs/mini-redis](https://github.com/tokio-rs/mini-redis)
+- [Async Book](https://rust-lang.github.io/async-book/)
+- [axum docs](https://docs.rs/crate/axum/latest)
+- [sqlx docs](https://docs.rs/crate/sqlx/latest)
+- [launchbadge/realworld-axum-sqlx](https://github.com/launchbadge/realworld-axum-sqlx)
+- [LukeMathWalker/zero-to-production](https://github.com/LukeMathWalker/zero-to-production)
+- [Zero To Production In Rust sample](https://www.zero2prod.com/assets/sample_zero2prod.pdf)
+
+### AI 基础与应用
+
+- [Hugging Face NLP Course](https://huggingface.co/learn/nlp-course)
+- [Google Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course)
+- [Dive into Deep Learning](https://d2l.ai/)
+- [Tokenizers docs](https://huggingface.co/docs/tokenizers/main/en/index)
+- [tokenizers crate docs](https://docs.rs/crate/tokenizers/latest)
+- [safetensors crate docs](https://docs.rs/crate/safetensors/latest)
+- [Polars user guide](https://docs.pola.rs/)
+- [Apache DataFusion docs](https://datafusion.apache.org/index.html)
+
+### Rust AI
+
+- [Candle integration docs](https://huggingface.co/docs/transformers/community_integrations/candle)
+- [huggingface/candle](https://github.com/huggingface/candle)
+- [The Burn Book](https://burn.dev/books/burn/)
+- [tracel-ai/burn](https://github.com/tracel-ai/burn)
+- [ort crate docs](https://docs.rs/crate/ort/latest)
+
+## 8. 对这个仓库的具体演进建议
+
+这个仓库不需要立刻大改结构，但需要明确演进顺序。
+
+建议按下面顺序扩展：
+
+1. 保留 `playground`，只放最小语法与标准库示例
+2. 重构 `todo_cli`，把它升级成第一个像样的小项目
+3. 新增 `ownership_lab`、`error_lab`、`collections_lab`
+4. 新增一个 async/service 项目，例如 `task_api`
+5. 新增一个 AI 项目，例如 `embedding_demo`
+6. 最后再做 `rag_service`
+
+不要现在就一次性新增十几个 crate。
+
+正确做法是：
+
+- 每完成一个阶段，再新增下一阶段的 crate
+- 每个 crate 必须有明确目标、运行方式、阶段总结
+
+建议的长期结构可以是：
+
+```text
+crates/
+  playground/
+  todo_cli/
+  ownership_lab/
+  error_lab/
+  collections_lab/
+  task_api/
+  embedding_demo/
+  rag_service/
+```
+
+## 9. 未来 90 天的最优行动顺序
+
+### 第 1-14 天
+
+- 完成阶段 0
+- 读 Rust Book 前半部分和 Cargo Book 关键部分
+- 跑一遍 Rustlings
+- 固定 fmt / clippy / test 基线
+- 给 `todo_cli` 列出重构清单
+
+### 第 15-35 天
+
+- 完成阶段 1
+- 新增 `ownership_lab`、`error_lab`、`collections_lab`
+- 重点突破 ownership、error handling、collections、traits
+- 每个主题至少写 1 个小实验
+
+### 第 36-60 天
+
+- 完成阶段 2
+- 以 `todo_cli` 为主项目做一次像样重构
+- 做 `lib + bin` 分层
+- 加测试
+- 加更清楚的错误处理
+- 引入 `tracing`
+
+### 第 61-75 天
+
+- 进入阶段 3
+- 跑 Tokio tutorial 与 `mini-redis`
+- 新建第一个 async/http 服务项目
+- 接数据库
+- 形成最小 API 服务闭环
+
+### 第 76-90 天
+
+- 开始阶段 4
+- 学 tokenizer / embedding / retrieval 基础
+- 做一个 `embedding_demo`
+- 可以先接模型 API，不强求本地模型
+- 但必须把“输入 -> 检索 -> 输出 -> 评测”链条跑通
+
+## 10. 每周节奏怎么安排最稳
+
+推荐节奏：
+
+- 2 次理论输入：每次 1.5-2 小时
+- 2 次代码训练：每次 1.5-2 小时
+- 1 次长时项目推进：4-5 小时
+- 1 次复盘：1 小时
+
+每周必须形成闭环：
+
+`学习 -> 编码 -> 测试 -> 总结`
+
+如果没有总结，知识会碎。
+
+如果没有测试，代码会虚。
+
+如果没有项目，成长会慢。
+
+## 11. 必须避免的坑
+
+- 不要把继续看入门语法例子当成成长
+- 不要在 Rust 基础不稳时就沉迷 async 魔法和宏技巧
+- 不要 clone 一堆大仓库却不读测试、不读 examples、不做自己的项目
+- 不要把 AI 等同于“调一个模型接口”
+- 不要把 AI 等同于“必须自己训练模型”
+- 不要并行开太多线：Rust 核心、服务端、AI、算法、OS 一起开，会直接失速
+- 不要只有 demo，没有测试、文档和复盘
+
+## 12. 最终判断
+
+你这条路线的正确打开方式，不是“先成为刷题选手”，也不是“先成为模型调参选手”。
+
+真正高成长、且适合 Rust 的路径是：
+
+- 用 Rust 建立扎实工程能力
+- 用服务端与 async 实践建立复杂项目承载力
+- 用 AI 闭环项目把数据、模型、检索、推理、评测串起来
+- 最后在 Rust AI 的某个方向做深
+
+这条路线的优势在于：
+
+- 成长上限高
+- 成果形成快
+- 可以持续沉淀到这个仓库里
+- 未来不管你偏应用、偏系统、偏 AI infra，都能接得住
+
+接下来最重要的，不是再找一份更长的书单，而是按阶段持续交付。
