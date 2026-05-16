@@ -19,7 +19,7 @@ fn show_scope_shadowing() {
     {
         let x = x * 2;
         println!("3) inside the inner scope: x = {x}");
-        println!("   this x exists only inside these braces");
+        println!("this x exists only inside these braces");
     }
 
     println!("4) back in the outer scope: x = {x}");
