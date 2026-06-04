@@ -9,5 +9,6 @@ fn main() {
     }
     for element in vec.iter() {
         println!("the value is:{}", element);
+        println!("{}", element);
     }
 }
