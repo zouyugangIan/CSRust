@@ -18,4 +18,13 @@ fn main() {
     for (key, value) in &scores {
         println!("key is {},score is{}", key, value);
     }
+    println!("{:?}", net());
+}
+
+fn net() -> Vec<String> {
+    let mut net = Vec::new();
+    net.push(String::from("127.0.0.1"));
+    net.push(String::from("127.0.0.2"));
+    net.push(String::from("127.0.0.3"));
+    return net;
 }
