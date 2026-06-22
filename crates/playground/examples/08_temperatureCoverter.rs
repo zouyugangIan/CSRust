@@ -7,19 +7,19 @@ fn main() {
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
-        covertFtoS();
-    
-    let mut x = 5;      
-    let y = {
-        let x = 3;
-        x + 1
-    };
-    println!("The value of y is: {y}");
-    println!("The value of x is: {x}");
+        covert_fto_s();
+
+        let x = 5;
+        let y = {
+            let x = 3;
+            x + 1
+        };
+        println!("The value of y is: {y}");
+        println!("The value of x is: {x}");
     }
 }
 
-fn covertFtoS() {
+fn covert_fto_s() {
     let mut input = String::new();
     println!("Enter a temperature in Fahrenheit:");
     io::stdin()
@@ -29,7 +29,7 @@ fn covertFtoS() {
     let s = (f - 32.0) * 5.0 / 9.0;
     println!("Temperature in Celsius: {s}");
 }
-fn covertStoF() {
+fn covert_sto_f() {
     let mut input = String::new();
     println!("Enter a temperature in Celsius:");
     io::stdin()
