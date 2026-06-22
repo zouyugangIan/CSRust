@@ -7,10 +7,10 @@
     "build": {
       "command": "cargo",
       "args": ["build", "--package", "playground", "--bin", "playground"],
-      "cwd": "$ZED_WORKTREE_ROOT"
+      "cwd": "$ZED_WORKTREE_ROOT",
     },
     "program": "$ZED_WORKTREE_ROOT/target/debug/playground",
-    "sourceLanguages": ["rust"]
+    "sourceLanguages": ["rust"],
   },
   {
     "label": "Debug current Rust example",
@@ -24,12 +24,12 @@
         "--package",
         "$ZED_CUSTOM_RUST_PACKAGE",
         "--example",
-        "$ZED_STEM"
+        "$ZED_STEM",
       ],
-      "cwd": "$ZED_WORKTREE_ROOT"
+      "cwd": "$ZED_WORKTREE_ROOT",
     },
     "program": "$ZED_WORKTREE_ROOT/target/debug/examples/$ZED_STEM",
-    "sourceLanguages": ["rust"]
+    "sourceLanguages": ["rust"],
   },
   {
     "label": "Debug guessing_game",
@@ -39,10 +39,24 @@
     "build": {
       "command": "cargo",
       "args": ["build", "--package", "guessing_game", "--bin", "guessing_game"],
-      "cwd": "$ZED_WORKTREE_ROOT"
+      "cwd": "$ZED_WORKTREE_ROOT",
     },
     "program": "$ZED_WORKTREE_ROOT/target/debug/guessing_game",
-    "sourceLanguages": ["rust"]
+    "sourceLanguages": ["rust"],
+  },
+  {
+    "label": "Debug minigrep",
+    "adapter": "CodeLLDB",
+    "request": "launch",
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "build": {
+      "command": "cargo",
+      "args": ["build", "--package", "minigrep", "--bin", "minigrep"],
+      "cwd": "$ZED_WORKTREE_ROOT",
+    },
+    "program": "$ZED_WORKTREE_ROOT/target/debug/minigrep",
+    "args": ["frog", "crates/minigrep/poem.txt"],
+    "sourceLanguages": ["rust"],
   },
   {
     "label": "Debug todo_cli (list)",
@@ -52,10 +66,10 @@
     "build": {
       "command": "cargo",
       "args": ["build", "--package", "todo_cli", "--bin", "todo_cli"],
-      "cwd": "$ZED_WORKTREE_ROOT"
+      "cwd": "$ZED_WORKTREE_ROOT",
     },
     "program": "$ZED_WORKTREE_ROOT/target/debug/todo_cli",
     "args": ["list"],
-    "sourceLanguages": ["rust"]
-  }
+    "sourceLanguages": ["rust"],
+  },
 ]
