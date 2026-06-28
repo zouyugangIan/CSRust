@@ -1,0 +1,20 @@
+["target/debug/minigrep", "to", "crates/minigrep/poem.txt"]!
+searching in file: crates/minigrep/poem.txt
+searching for: to
+
+The content of the file is :
+I'm nobody! Who are you?
+Are you nobody, too?
+Then there's a pair of us - don't tell!
+They would banish us, You know.
+
+How dready to be somebody!
+How public, like a frog
+To tell your name the livelong day
+To the admiring bog!
+
+The Result is:
+Are you nobody, too?
+How dready to be somebody!
+To tell your name the livelong day
+To the admiring bog!
