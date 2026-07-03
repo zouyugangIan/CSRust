@@ -7,7 +7,6 @@ use std::time::Duration;
 fn main() {
     let simulated_user_specified_value = 10;
     let simulated_random_number = 7;
-    let simulated_random_numbers = [10, 20, 30, 40, 50];
 
     generate_workout(simulated_user_specified_value, simulated_random_number);
 }
