@@ -13,3 +13,25 @@ impl Screen {
         }
     }
 }
+
+pub struct Post {
+    state: Box<dyn State>,
+    content: String,
+}
+impl Post {
+    pub fn new(content: String) -> Self {
+        Self {
+            state: Box::new(Draft {}),
+            content,
+        }
+    }
+    pub fn publish(&mut self) {
+        self.state.publish(self);
+    }
+}
+
+trait state {}
+
+struct Draft {}
+
+impl state for Draft {}
