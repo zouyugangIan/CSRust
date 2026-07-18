@@ -1,3 +1,5 @@
+fn main() {}
+
 pub trait Draw {
     fn draw(&self);
 }
@@ -30,8 +32,12 @@ impl Post {
     }
 }
 
-trait state {}
+trait State {
+    fn publish(&mut self, post: &mut dyn Draw);
+}
 
 struct Draft {}
 
-impl state for Draft {}
+impl State for Draft {
+    fn publish(&mut self, post: &mut dyn Draw) {}
+}
