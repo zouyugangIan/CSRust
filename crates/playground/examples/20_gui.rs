@@ -1,12 +1,8 @@
-// use gui::Screen;
-// fn main() {
-//     let screen = Screen {
-//         components: vec![Box::new(String::from("Hi"))],
-//     };
-//     screen.run();
-// }
-
 fn main() {
+    let x = 5;
+    println!("{x}");
+    let x = x + 5;
+    println!("{x}");
     let screen = Screen {
         components: vec![
             Box::new(Button {
@@ -62,7 +58,11 @@ impl Button {
 }
 impl Draw for Button {
     fn draw(&self) {
-        println!("Draw Button!");
+        println!("Drawing Button...");
+        println!(
+            "There are items in Button:\n{},\n{},\n{}",
+            self.width, self.height, self.label
+        );
     }
 }
 
@@ -83,6 +83,10 @@ impl SelectBox {
 }
 impl Draw for SelectBox {
     fn draw(&self) {
-        println!("Draw SelectBox!");
+        println!("Drawing SelectBox...");
+        println!(
+            "There are items in SelectBox:\n{},\n{},\n{},\n{}",
+            self.option[0], self.option[1], self.option[2], self.option[3]
+        );
     }
 }

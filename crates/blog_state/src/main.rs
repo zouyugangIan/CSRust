@@ -1,5 +1,3 @@
-use blog_state::*;
-
 fn main() {
     let mut post = Post::new();
 
@@ -14,4 +12,5 @@ fn main() {
         "This morning, I got up early and learned rust for a while!",
         post.content()
     );
+    println!("Content:{}", post.content());
 }

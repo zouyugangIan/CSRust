@@ -3,11 +3,8 @@ pub struct Post {
     content: String,
 }
 impl Post {
-    pub fn new() -> Self {
-        Self {
-            state: Some(Box::new(Draft {})),
-            content: String::new(),
-        }
+    pub fn new() -> DraftPost {
+        DraftPost {}
     }
 
     pub fn add_text(&mut self, text: &str) {
@@ -39,9 +36,9 @@ trait State {
     }
 }
 
-struct Draft {}
+struct DraftPost {}
 
-impl State for Draft {
+impl DraftPost {
     fn request_review(self: Box<Self>) -> Box<dyn State> {
         Box::new(PendingReview {})
     }
@@ -51,27 +48,13 @@ impl State for Draft {
     }
 }
 
-struct PendingReview {}
+struct PendingReviewPost {}
 
-impl State for PendingReview {
+impl PendingReviewPost {
     fn request_review(self: Box<Self>) -> Box<dyn State> {
         self
     }
     fn approve(self: Box<Self>) -> Box<dyn State> {
         Box::new(Approved {})
-    }
-}
-
-struct Approved {}
-
-impl State for Approved {
-    fn request_review(self: Box<Self>) -> Box<dyn State> {
-        self
-    }
-    fn approve(self: Box<Self>) -> Box<dyn State> {
-        self
-    }
-    fn content<'a>(&self, post: &'a Post) -> &'a str {
-        &post.content
     }
 }
