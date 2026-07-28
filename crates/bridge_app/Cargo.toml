@@ -1,0 +1,20 @@
+[package]
+name = "bridge-app"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+bridge-core = { path = "../bridge_core" }
+bridge-io = { path = "../bridge_io" }
+bridge-solver = { path = "../bridge_solver" }
+bridge-validation = { path = "../bridge_validation" }
+gpui.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

@@ -5,4 +5,5 @@ edition = "2024"
 publish = false
 
 [dependencies]
-gpui = { version = "0.2.2" }
+bridge-app = { path = "../bridge_app" }
+gpui.workspace = true
