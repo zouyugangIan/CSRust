@@ -70,8 +70,9 @@ rustfmt --edition 2024 --check \
   crates/bridge_app/src/lib.rs crates/bridge_app/src/main.rs
 ```
 
-兼容入口仍可使用：
+兼容入口仍可使用（也可在 `--` 后传入 `.bridge.json` 路径直接打开）：
 
 ```bash
-cargo run -p playground --example 24_forceGraph
+cargo run -p playground --example 22_forceGraph
+cargo run -p playground --example 22_forceGraph -- demo.bridge.json
 ```

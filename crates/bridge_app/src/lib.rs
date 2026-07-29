@@ -54,6 +54,10 @@ const SHORTCUT_OPEN: &str = "Ctrl+O";
 const SHORTCUT_SAVE: &str = "⌘S";
 #[cfg(not(target_os = "macos"))]
 const SHORTCUT_SAVE: &str = "Ctrl+S";
+#[cfg(target_os = "macos")]
+const SHORTCUT_SAVE_AS: &str = "⇧⌘S";
+#[cfg(not(target_os = "macos"))]
+const SHORTCUT_SAVE_AS: &str = "Ctrl+Shift+S";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Page {
@@ -67,6 +71,7 @@ enum ToolbarAction {
     New,
     Open,
     Save,
+    SaveAs,
     Undo,
     Redo,
 }
@@ -247,7 +252,7 @@ impl Analysis {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum GraphValue {
     Shear,
     Moment,
@@ -266,6 +271,32 @@ impl GraphValue {
             Self::Displacement => sample.displacement,
         }
     }
+
+    /// Structural-engineering convention: positive bending moments are drawn
+    /// below the member baseline. Other diagrams retain their established
+    /// mathematical screen direction.
+    fn screen_direction(self) -> f32 {
+        match self {
+            Self::Moment | Self::BaseMoment | Self::CorrectionMoment => 1.0,
+            Self::Shear | Self::Displacement => -1.0,
+        }
+    }
+
+    fn display_value(self, value: f64) -> String {
+        match self {
+            Self::Shear => format!("{:+.1} kN", value / 1_000.0),
+            Self::Moment | Self::BaseMoment | Self::CorrectionMoment => {
+                format!("{:+.1} kN·m", value / 1_000.0)
+            }
+            Self::Displacement => format!("{:+.2} mm", value * 1_000.0),
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+struct GraphLabel {
+    x: f64,
+    value: f64,
 }
 
 #[derive(Clone, Copy)]
@@ -292,7 +323,9 @@ impl Render for BeamCanvas {
             .into_any_element(),
             CanvasKind::Graph { value, accent } => canvas(
                 |_, _, _| {},
-                move |bounds, _, window, _| paint_graph(bounds, &analysis, value, accent, window),
+                move |bounds, _, window, cx| {
+                    paint_graph(bounds, &analysis, value, accent, window, cx)
+                },
             )
             .size_full()
             .into_any_element(),
@@ -781,14 +814,9 @@ impl BeamLab {
             return;
         }
         let default_name = format!("{}.bridge.json", safe_file_stem(&self.params.project_name));
-        let directory = self
-            .project_path
-            .as_deref()
-            .and_then(Path::parent)
-            .filter(|path| !path.as_os_str().is_empty())
-            .unwrap_or_else(|| Path::new("."));
+        let directory = save_dialog_directory(self.project_path.as_deref());
         let document_revision = self.document_revision;
-        let selection = cx.prompt_for_new_path(directory, Some(&default_name));
+        let selection = cx.prompt_for_new_path(&directory, Some(&default_name));
         cx.spawn(async move |this, cx| {
             let path = match selection.await {
                 Ok(Ok(Some(path))) => path,
@@ -830,6 +858,7 @@ impl BeamLab {
             cx.notify();
             return;
         }
+        let path = ensure_project_extension(path);
         let snapshot = self.snapshot();
         let model = match build_model(
             &snapshot.params,
@@ -938,8 +967,25 @@ impl BeamLab {
                     return;
                 }
             };
-            let worker_path = path.clone();
-            let task = cx.background_spawn(async move { load_project(&worker_path) });
+            let _ = this.update(cx, move |app, cx| {
+                if app.document_revision == document_revision {
+                    app.open_path(path, cx);
+                }
+            });
+        })
+        .detach();
+    }
+
+    fn open_path(&mut self, path: PathBuf, cx: &mut Context<Self>) {
+        let document_revision = self.document_revision;
+        self.status_message = format!("正在打开 · {}", display_path(&path));
+        cx.notify();
+
+        let worker_path = path.clone();
+        let task = cx
+            .background_executor()
+            .spawn(async move { load_project(&worker_path) });
+        cx.spawn(async move |this, cx| {
             let result = task.await;
             let _ = this.update(cx, move |app, cx| {
                 if app.document_revision != document_revision {
@@ -1511,6 +1557,7 @@ impl BeamLab {
                         ToolbarAction::New => app.request_new(window, cx),
                         ToolbarAction::Open => app.request_open(window, cx),
                         ToolbarAction::Save => app.save(cx),
+                        ToolbarAction::SaveAs => app.save_as(cx),
                         ToolbarAction::Undo => app.undo(cx),
                         ToolbarAction::Redo => app.redo(cx),
                     }))
@@ -1920,6 +1967,11 @@ impl BeamLab {
     }
 
     fn render_header(&self, stable: bool, cx: &mut Context<Self>) -> Div {
+        let document_label = self
+            .project_path
+            .as_deref()
+            .map(display_path)
+            .unwrap_or_else(|| "尚未保存".to_string());
         let operation_failed = self.status_message.contains("失败")
             || self.status_message.starts_with("无法")
             || self.status_message.starts_with("请先");
@@ -2001,10 +2053,10 @@ impl BeamLab {
                                     .child("BridgeLab"),
                             )
                             .child(
-                                div()
-                                    .text_xs()
-                                    .text_color(rgb(MUTED))
-                                    .child(self.params.project_name.clone()),
+                                div().text_xs().text_color(rgb(MUTED)).child(format!(
+                                    "{} · {document_label}",
+                                    self.params.project_name
+                                )),
                             ),
                     ),
             )
@@ -2040,6 +2092,13 @@ impl BeamLab {
                         ToolbarAction::Save,
                         "保存",
                         SHORTCUT_SAVE,
+                        true,
+                        cx,
+                    ))
+                    .child(self.render_toolbar_button(
+                        ToolbarAction::SaveAs,
+                        "另存",
+                        SHORTCUT_SAVE_AS,
                         true,
                         cx,
                     ))
@@ -2837,6 +2896,19 @@ fn display_support(
     }
 }
 
+fn save_dialog_directory(project_path: Option<&Path>) -> PathBuf {
+    let current_directory = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
+    let directory = project_path
+        .and_then(Path::parent)
+        .filter(|path| !path.as_os_str().is_empty())
+        .unwrap_or(current_directory.as_path());
+    if directory.is_absolute() {
+        directory.to_path_buf()
+    } else {
+        current_directory.join(directory)
+    }
+}
+
 fn safe_file_stem(name: &str) -> String {
     let stem = name
         .chars()
@@ -3128,12 +3200,153 @@ fn paint_structure(bounds: Bounds<Pixels>, analysis: &Analysis, window: &mut Win
     }
 }
 
+fn nearest_sample_index(samples: &[Sample], x: f64) -> Option<usize> {
+    samples
+        .iter()
+        .enumerate()
+        .min_by(|(_, left), (_, right)| (left.x - x).abs().total_cmp(&(right.x - x).abs()))
+        .map(|(index, _)| index)
+}
+
+fn graph_labels(analysis: &Analysis, value: GraphValue) -> Vec<GraphLabel> {
+    if analysis.samples.is_empty() {
+        return Vec::new();
+    }
+
+    let mut indices = Vec::with_capacity(8);
+    let mut add = |index: usize| {
+        if !indices.contains(&index) {
+            indices.push(index);
+        }
+    };
+
+    if let Some((index, _)) = analysis
+        .samples
+        .iter()
+        .enumerate()
+        .min_by(|(_, left), (_, right)| value.value(left).total_cmp(&value.value(right)))
+    {
+        add(index);
+    }
+    if let Some((index, _)) = analysis
+        .samples
+        .iter()
+        .enumerate()
+        .max_by(|(_, left), (_, right)| value.value(left).total_cmp(&value.value(right)))
+    {
+        add(index);
+    }
+    if let Some(index) = nearest_sample_index(&analysis.samples, analysis.params.load_position) {
+        add(index);
+    }
+    add(0);
+    add(analysis.samples.len() - 1);
+
+    let mut internal_supports = analysis
+        .model
+        .nodes()
+        .iter()
+        .skip(1)
+        .take(analysis.model.nodes().len().saturating_sub(2))
+        .filter_map(|node| nearest_sample_index(&analysis.samples, node.position.x_m))
+        .collect::<Vec<_>>();
+    internal_supports.sort_by(|left, right| {
+        value
+            .value(&analysis.samples[*right])
+            .abs()
+            .total_cmp(&value.value(&analysis.samples[*left]).abs())
+    });
+    for index in internal_supports.into_iter().take(3) {
+        add(index);
+    }
+
+    let mut labels = indices
+        .into_iter()
+        .map(|sample_index| GraphLabel {
+            x: analysis.samples[sample_index].x,
+            value: value.value(&analysis.samples[sample_index]),
+        })
+        .collect::<Vec<_>>();
+    labels.sort_by(|left, right| left.x.total_cmp(&right.x));
+    labels
+}
+
+fn graph_screen_y(
+    value: GraphValue,
+    sample_value: f64,
+    max_value: f64,
+    baseline: f32,
+    amplitude: f32,
+) -> f32 {
+    let normalized = (sample_value / max_value) as f32;
+    baseline + normalized * amplitude * value.screen_direction()
+}
+
+#[allow(clippy::too_many_arguments)]
+fn paint_graph_label(
+    window: &mut Window,
+    cx: &mut App,
+    value: GraphValue,
+    sample_value: f64,
+    graph_x: f32,
+    graph_y: f32,
+    baseline: f32,
+    left: f32,
+    right: f32,
+    top: f32,
+    bottom: f32,
+    accent: u32,
+) {
+    let content: gpui::SharedString = value.display_value(sample_value).into();
+    let text_style = window.text_style();
+    let run = TextRun {
+        len: content.len(),
+        font: text_style.font(),
+        color: rgb(TEXT).into(),
+        background_color: None,
+        underline: None,
+        strikethrough: None,
+    };
+    let line = window
+        .text_system()
+        .shape_line(content, px(10.0), &[run], None);
+    let label_width = f32::from(line.width) + 8.0;
+    let label_height = 16.0;
+    let label_x = (graph_x - label_width * 0.5).clamp(left, (right - label_width).max(left));
+    let preferred_y = if graph_y >= baseline {
+        graph_y + 6.0
+    } else {
+        graph_y - label_height - 6.0
+    };
+    let label_y = preferred_y.clamp(top, (bottom - label_height).max(top));
+
+    draw_circle(window, graph_x, graph_y, 3.2, rgb(accent));
+    window.paint_quad(quad(
+        Bounds::new(
+            point(px(label_x), px(label_y)),
+            size(px(label_width), px(label_height)),
+        ),
+        px(4.0),
+        with_alpha(BG, 0.92),
+        px(1.0),
+        with_alpha(accent, 0.55),
+        BorderStyle::Solid,
+    ));
+    let _ = line.paint(
+        point(px(label_x + 4.0), px(label_y + 1.0)),
+        px(14.0),
+        window,
+        cx,
+    );
+}
+
 fn paint_graph(
     bounds: Bounds<Pixels>,
     analysis: &Analysis,
     value: GraphValue,
     accent: u32,
     window: &mut Window,
+    cx: &mut App,
 ) {
     let left = f32::from(bounds.left()) + 24.0;
     let right = f32::from(bounds.right()) - 18.0;
@@ -3190,8 +3403,8 @@ fn paint_graph(
         .iter()
         .map(|sample| {
             let x = left + (right - left) * (sample.x / span) as f32;
-            let normalized = (value.value(sample) / max_value) as f32;
-            point(px(x), px(baseline - normalized * amplitude))
+            let y = graph_screen_y(value, value.value(sample), max_value, baseline, amplitude);
+            point(px(x), px(y))
         })
         .collect::<Vec<_>>();
 
@@ -3202,6 +3415,25 @@ fn paint_graph(
         fill_points.push(point(px(right), px(baseline)));
         draw_polygon(window, &fill_points, with_alpha(accent, 0.14));
         draw_polyline(window, &graph_points, 2.7, rgb(accent));
+    }
+
+    for label in graph_labels(analysis, value) {
+        let graph_x = left + (right - left) * (label.x / span) as f32;
+        let graph_y = graph_screen_y(value, label.value, max_value, baseline, amplitude);
+        paint_graph_label(
+            window,
+            cx,
+            value,
+            label.value,
+            graph_x,
+            graph_y,
+            baseline,
+            left,
+            right,
+            top,
+            bottom,
+            accent,
+        );
     }
 }
 
@@ -3275,8 +3507,10 @@ fn paint_deformed_shape(bounds: Bounds<Pixels>, analysis: &Analysis, window: &mu
 }
 
 pub fn run() {
-    Application::new().run(|cx: &mut App| {
+    let initial_project_path = std::env::args_os().nth(1).map(PathBuf::from);
+    Application::new().run(move |cx: &mut App| {
         let bounds = Bounds::centered(None, size(px(1360.0), px(860.0)), cx);
+        let initial_project_path = initial_project_path.clone();
         cx.open_window(
             WindowOptions {
                 window_bounds: Some(WindowBounds::Windowed(bounds)),
@@ -3291,8 +3525,11 @@ pub fn run() {
                 app_id: Some("bridgelab".into()),
                 ..Default::default()
             },
-            |window, cx| {
+            move |window, cx| {
                 let app = cx.new(BeamLab::new);
+                if let Some(path) = initial_project_path {
+                    app.update(cx, |app, cx| app.open_path(path, cx));
+                }
                 let weak_app = app.downgrade();
                 window.on_window_should_close(cx, move |window, cx| {
                     let dirty = weak_app
@@ -3443,5 +3680,74 @@ mod tests {
             Ok(SaveTaskOutcome::Saved)
         );
         assert!(path.exists());
+    }
+
+    #[test]
+    fn project_file_round_trip_reopens_continuous_beam_and_solves() {
+        let directory = tempfile::tempdir().expect("temporary directory");
+        let path = directory.path().join("教学三跨桥");
+        let normalized_path = ensure_project_extension(path);
+        let params = BeamParams {
+            spans: vec![9.0, 12.0, 9.0],
+            load: 135.0,
+            load_position: 15.0,
+            ..BeamParams::default()
+        };
+        let model =
+            build_model(&params, Support::Pinned, Support::Roller).expect("continuous beam model");
+
+        save_project(&normalized_path, &model).expect("save project");
+        let loaded = load_project(&normalized_path).expect("reopen saved project");
+        let (restored, left, right) =
+            editor_state_from_model(&loaded.model).expect("lossless editor projection");
+        let analysis = analyze(restored.clone(), left, right).expect("solve reopened project");
+
+        assert_eq!(restored, params);
+        assert_eq!(analysis.params.spans, vec![9.0, 12.0, 9.0]);
+        assert!(analysis.validation.passed());
+        assert!(analysis.max_moment.is_finite());
+    }
+
+    #[test]
+    fn bending_moment_uses_positive_downward_drawing_convention() {
+        let baseline = 50.0;
+        let positive_moment = graph_screen_y(GraphValue::Moment, 10.0, 10.0, baseline, 20.0);
+        let positive_shear = graph_screen_y(GraphValue::Shear, 10.0, 10.0, baseline, 20.0);
+
+        assert!(positive_moment > baseline);
+        assert!(positive_shear < baseline);
+    }
+
+    #[test]
+    fn graph_labels_include_load_and_extrema_without_flooding_chart() {
+        let analysis = analyze(BeamParams::default(), Support::Pinned, Support::Roller)
+            .expect("default continuous beam");
+        let labels = graph_labels(&analysis, GraphValue::Moment);
+        let minimum = analysis
+            .samples
+            .iter()
+            .map(|sample| sample.moment)
+            .min_by(f64::total_cmp)
+            .expect("moment samples");
+        let maximum = analysis
+            .samples
+            .iter()
+            .map(|sample| sample.moment)
+            .max_by(f64::total_cmp)
+            .expect("moment samples");
+
+        assert!(labels.len() <= 8);
+        assert!(
+            labels
+                .iter()
+                .any(|label| (label.x - analysis.params.load_position).abs() < 1.0e-9)
+        );
+        assert!(labels.iter().any(|label| label.value == minimum));
+        assert!(labels.iter().any(|label| label.value == maximum));
+    }
+
+    #[test]
+    fn initial_save_dialog_directory_is_absolute() {
+        assert!(save_dialog_directory(None).is_absolute());
     }
 }

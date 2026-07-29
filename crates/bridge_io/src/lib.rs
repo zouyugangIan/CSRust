@@ -244,7 +244,7 @@ pub fn ensure_project_extension(path: impl Into<PathBuf>) -> PathBuf {
     let has_bridge_json = path
         .file_name()
         .and_then(|name| name.to_str())
-        .is_some_and(|name| name.ends_with(".bridge.json"));
+        .is_some_and(|name| name.to_ascii_lowercase().ends_with(".bridge.json"));
     if !has_bridge_json {
         path.set_extension(PROJECT_EXTENSION);
     }
@@ -577,6 +577,10 @@ mod tests {
         assert_eq!(
             ensure_project_extension("demo.bridge.json"),
             PathBuf::from("demo.bridge.json")
+        );
+        assert_eq!(
+            ensure_project_extension("DEMO.BRIDGE.JSON"),
+            PathBuf::from("DEMO.BRIDGE.JSON")
         );
     }
 }
