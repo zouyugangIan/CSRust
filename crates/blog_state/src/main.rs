@@ -1,3 +1,5 @@
+use blog_state::*;
+
 fn main() {
     let mut post = Post::new();
 
