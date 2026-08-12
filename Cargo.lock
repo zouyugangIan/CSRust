@@ -6851,6 +6851,7 @@ version = "0.1.0"
 dependencies = [
  "bridge-app",
  "gpui",
+ "rayon",
 ]
 
 [[package]]

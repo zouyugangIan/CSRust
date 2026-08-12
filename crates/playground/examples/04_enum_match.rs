@@ -1,5 +1,5 @@
 fn main() {
-    let language = Language::English;
+    let language = Language::Chinese;
     match language {
         Language::English => println!("Hello!"),
         Language::Russian => println!("Привет!"),
@@ -11,6 +11,7 @@ fn main() {
         Language::Portuguese => println!("Olá!"),
         _ => println!("Unknown language!"),
     }
+    println!("language is {}", language.getLanguage());
 }
 
 impl Language {
