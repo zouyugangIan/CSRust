@@ -5795,6 +5795,10 @@ name = "multithread_web_server"
 version = "0.1.0"
 
 [[package]]
+name = "multithread_web_server2"
+version = "0.1.0"
+
+[[package]]
 name = "naga"
 version = "25.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
