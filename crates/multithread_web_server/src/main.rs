@@ -1,15 +1,25 @@
+use multithread_web_server::ThreadPool;
 use std::{
-    arch::x86_64, fs, io::{BufReader, prelude::*}, net::{TcpListener, TcpStream}, os::unix::fs,
+    fs,
+    io::{BufReader, prelude::*},
+    net::{TcpListener, TcpStream},
+    thread,
+    time::Duration,
 };
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:8877").unwrap();
 
+    let pool = ThreadPool::new(4);
     for stream in listener.incoming() {
         let stream = stream.unwrap();
         // println!("Connection established!");
-        //
-        handle_connection(stream);
+        // thread::spawn(|| {
+        //     handle_connection(stream);
+        // });
+        pool.excute(|| {
+            handle_connection(stream);
+        })
     }
 }
 
@@ -22,12 +32,14 @@ fn handle_connection(mut stream: TcpStream) {
     let html_path = concat!(env!("CARGO_MANIFEST_DIR"), "/hello.html");
     let html_path2 = concat!(env!("CARGO_MANIFEST_DIR"), "/404.html");
 
-    let (status_line, filename) =
-        if request_line = "GET / HTTP/1.1"{
-            ("HTTP/1.1 200 OK ",html_path)
-        }else{
-            ("HTTP/1.1 404 NOT FOUND ",html_path2)
-            }
+    let (status_line, filename) = match &request_line[..] {
+        "GET / HTTP/1.1" => ("HTTP/1.1 200 OK ", html_path),
+        "GET /sleep HTTP/1.1" => {
+            std::thread::sleep(Duration::from_secs(5));
+            ("HTTP/1.1 200 OK ", html_path)
+        }
+        _ => ("HTTP/1.1 404 NOT FOUND ", html_path2),
+    };
 
     let contents = fs::read_to_string(filename).unwrap();
     let length = contents.len();
@@ -36,6 +48,5 @@ fn handle_connection(mut stream: TcpStream) {
         Content-Length: {length}\r\n\r\n\
         {contents}"
     );
-        stream.write_all(response.as_bytes()).unwrap();
-    }
+    stream.write_all(response.as_bytes()).unwrap();
 }
