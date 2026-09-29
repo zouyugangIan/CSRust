@@ -3,7 +3,6 @@ use std::{
     fs,
     io::{BufReader, prelude::*},
     net::{TcpListener, TcpStream},
-    thread,
     time::Duration,
 };
 
@@ -11,16 +10,17 @@ fn main() {
     let listener = TcpListener::bind("127.0.0.1:8877").unwrap();
 
     let pool = ThreadPool::new(4);
-    for stream in listener.incoming() {
+    for stream in listener.incoming().take(3) {
         let stream = stream.unwrap();
         // println!("Connection established!");
         // thread::spawn(|| {
         //     handle_connection(stream);
         // });
-        pool.excute(|| {
+        pool.execute(|| {
             handle_connection(stream);
         })
     }
+    println!("Shutting down.")
 }
 
 fn handle_connection(mut stream: TcpStream) {
@@ -32,7 +32,7 @@ fn handle_connection(mut stream: TcpStream) {
     let html_path = concat!(env!("CARGO_MANIFEST_DIR"), "/hello.html");
     let html_path2 = concat!(env!("CARGO_MANIFEST_DIR"), "/404.html");
 
-    let (status_line, filename) = match &request_line[..] {
+    let (status_line, filename) = match request_line.as_str() {
         "GET / HTTP/1.1" => ("HTTP/1.1 200 OK ", html_path),
         "GET /sleep HTTP/1.1" => {
             std::thread::sleep(Duration::from_secs(5));
