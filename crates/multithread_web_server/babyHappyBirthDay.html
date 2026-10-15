@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf7ef">
+  <meta name="description" content="祝邹小宝生日快乐！把成长的每一小步好好收藏，愿你平安快乐，被爱包围。">
+  <title>祝邹小宝生日快乐 ♡</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #faf7ef;
+      --ink: #4c443b;
+      --muted: #8a8277;
+      --green: #778467;
+      --rose: #be7866;
+      --line: #ded8cb;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .3;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%237b7055' opacity='.12' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+    }
+    .page { width: min(1180px, calc(100% - 96px)); margin: auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 28px 0 25px; border-bottom: 1px solid var(--line); }
+    .brand { display: inline-flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; letter-spacing: .15em; }
+    .brand-heart { width: 30px; height: 30px; color: var(--rose); }
+    .header-note { font: italic 17px Georgia, serif; color: var(--muted); }
+    .hero { display: grid; grid-template-columns: .9fr 1.15fr; align-items: center; gap: 52px; padding: 38px 0 22px; }
+    .eyebrow { margin: 0 0 22px; font-size: 10px; font-weight: 600; letter-spacing: .28em; color: var(--green); }
+    h1 { margin: 0; font-family: "Noto Serif CJK SC", "Songti SC", "SimSun", serif; font-size: clamp(42px, 4.9vw, 68px); font-weight: 500; line-height: 1.5; letter-spacing: .025em; }
+    h1 span { color: var(--rose); position: relative; white-space: nowrap; }
+    h1 span::after { content: ""; position: absolute; left: 0; right: 0; bottom: -9px; height: 9px; border-top: 2px solid #cfa38c; border-radius: 50%; transform: rotate(-3deg); }
+    .birthday { margin: 27px 0 16px; display: flex; align-items: center; gap: 12px; font-size: 21px; font-weight: 500; letter-spacing: .08em; }
+    .cake-icon { width: 32px; height: 32px; color: var(--rose); }
+    .intro { margin: 0; font-size: 14px; color: #776e63; line-height: 2.15; letter-spacing: .04em; }
+    .birthday-note { margin: 29px 0 0; padding-left: 13px; border-left: 2px solid #b6bca5; color: #788167; font-size: 12px; line-height: 1.8; letter-spacing: .08em; }
+    .album { position: relative; padding: 42px 0 30px; }
+    .album::before { content: ""; position: absolute; inset: 5% -3% 1%; border-radius: 50%; background: #e9ebdf; transform: rotate(-12deg); }
+    .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; position: relative; }
+    .polaroid { margin: 0; background: #fffefa; padding: 11px 11px 0; box-shadow: 0 10px 25px #514b3520, 0 1px 4px #514b3510; position: relative; transition: transform .3s, box-shadow .3s; }
+    .polaroid:first-child { transform: rotate(-7deg); margin-top: 35px; z-index: 1; }
+    .polaroid:last-child { transform: rotate(6deg); margin-top: 0; }
+    .polaroid::before { content: ""; position: absolute; z-index: 2; width: 78px; height: 26px; background: #d7bd9480; top: -12px; left: calc(50% - 39px); transform: rotate(3deg); clip-path: polygon(3% 0, 100% 4%, 97% 100%, 0 94%); }
+    .polaroid:last-child::before { background: #a4b19480; transform: rotate(-6deg); }
+    .polaroid:hover { transform: rotate(0) translateY(-5px); z-index: 3; box-shadow: 0 15px 32px #514b3530; }
+    .photo-frame { overflow: hidden; background: #eee9e1; }
+    .polaroid img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: contain; }
+    figcaption { display: flex; justify-content: space-between; align-items: center; min-height: 62px; gap: 8px; font-family: "Noto Serif CJK SC", "Songti SC", serif; font-size: 14px; letter-spacing: .05em; }
+    .photo-number { font: italic 16px Georgia, serif; color: #aaa18f; }
+    .album-note { position: relative; text-align: center; margin: 30px 0 0; color: #8b826e; font: italic 18px Georgia, serif; letter-spacing: .02em; transform: rotate(-3deg); }
+    .sparkle { position: absolute; width: 36px; height: 36px; color: #b0a17f; top: -4px; right: 10px; transform: rotate(12deg); }
+    .flower { position: absolute; width: 63px; height: 63px; left: -30px; bottom: 0; z-index: 4; transform: rotate(-14deg); }
+    .ribbon { display: flex; align-items: center; justify-content: center; gap: 28px; padding: 22px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: #7f8771; font-size: 12px; letter-spacing: .18em; }
+    .ribbon .tiny-star { font-size: 16px; color: #b3a17c; }
+    .letter { padding: 66px 0 63px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 70px; }
+    .letter-heading { display: flex; align-items: flex-start; gap: 20px; }
+    .letter-index { font: italic 16px Georgia, serif; color: #b4a18b; padding-top: 5px; }
+    h2 { margin: 0 0 14px; font-family: "Noto Serif CJK SC", "Songti SC", "SimSun", serif; font-weight: 500; font-size: 28px; line-height: 1.65; letter-spacing: .08em; }
+    .letter-subtitle { margin: 0; font: italic 16px Georgia, serif; color: #998b77; }
+    .letter-body { padding-top: 0; font-size: 14px; line-height: 2.2; color: #796f62; letter-spacing: .04em; }
+    .letter-body p { margin: 0 0 15px; }
+    .letter-body strong { color: #8e624f; font-weight: 500; }
+    .signature { color: #788167; text-align: right; font-size: 13px; margin-top: 23px !important; }
+    .video-section { border-top: 1px solid var(--line); padding: 28px 0 35px; display: grid; grid-template-columns: .9fr 1.15fr; gap: 52px; align-items: center; }
+    .video-copy p { color: #857b6d; font-size: 13px; line-height: 2; letter-spacing: .04em; }
+    .video-frame { margin: 0; background: #fffefa; padding: 12px 12px 0; box-shadow: 0 6px 24px #514b3514; }
+    .video-frame video { display: block; width: 100%; max-height: 430px; aspect-ratio: 16 / 9; background: #252923; object-fit: contain; }
+    .video-frame figcaption { justify-content: center; color: #8b806f; font-size: 12px; min-height: 46px; }
+    footer { border-top: 1px solid var(--line); padding: 22px 0 30px; display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 10px; letter-spacing: .12em; color: #9a9081; }
+    .footer-love { font: italic 15px Georgia, serif; color: #a27b69; }
+    @media (min-width: 1550px) { .page { width: min(1320px, calc(100% - 160px)); } .hero, .video-section { gap: 90px; } }
+    @media (max-width: 900px) { .page { width: calc(100% - 64px); } .hero { gap: 28px; grid-template-columns: .85fr 1fr; padding-top: 30px; } h1 { font-size: 43px; } .intro { font-size: 12px; } .birthday { font-size: 18px; } .polaroid { padding: 8px 8px 0; } figcaption { font-size: 11px; min-height: 49px; } .photos { gap: 10px; } .letter, .video-section { gap: 30px; } h2 { font-size: 24px; } }
+    @media (max-width: 640px) {
+      .page { width: calc(100% - 40px); }
+      .header { padding: 20px 0; }
+      .brand { font-size: 12px; letter-spacing: .1em; gap: 8px; }
+      .brand-heart { width: 24px; height: 24px; }
+      .header-note { font-size: 13px; }
+      .hero { grid-template-columns: 1fr; gap: 12px; padding: 30px 0 24px; }
+      .hero-copy { text-align: center; }
+      .eyebrow { font-size: 9px; margin-bottom: 16px; }
+      h1 { font-size: clamp(36px, 10vw, 48px); line-height: 1.45; }
+      .birthday { justify-content: center; margin: 25px 0 12px; font-size: 19px; }
+      .intro { font-size: 12px; line-height: 2; }
+      .birthday-note { display: none; }
+      .album { width: min(450px, 100%); margin: auto; padding-top: 33px; padding-bottom: 9px; }
+      .photos { gap: 14px; padding: 0 6px; }
+      .polaroid:first-child { margin-top: 17px; transform: rotate(-5deg); }
+      .polaroid:last-child { transform: rotate(5deg); }
+      figcaption { font-size: 10px; min-height: 42px; letter-spacing: 0; }
+      .photo-number { font-size: 13px; }
+      .polaroid::before { width: 55px; height: 20px; left: calc(50% - 27px); top: -9px; }
+      .flower { width: 44px; height: 44px; left: -8px; bottom: 5px; }
+      .sparkle { width: 27px; height: 27px; right: 5px; top: 4px; }
+      .album-note { font-size: 15px; margin-top: 19px; }
+      .ribbon { gap: 12px; padding: 18px 0; font-size: 10px; letter-spacing: .08em; }
+      .letter { grid-template-columns: 1fr; gap: 28px; padding: 37px 0; }
+      .letter-heading { gap: 15px; }
+      h2 { font-size: 25px; }
+      .letter-body { font-size: 13px; }
+      .video-section { grid-template-columns: 1fr; gap: 15px; padding: 25px 0; }
+      .video-copy h2 br, .video-copy p br { display: none; }
+      .video-copy .eyebrow { margin-bottom: 10px; }
+      .video-copy p { margin: 8px 0 0; font-size: 12px; }
+      .video-copy .letter-subtitle { display: none; }
+      .video-frame { padding: 8px 8px 0; }
+      footer { font-size: 9px; padding: 20px 0; letter-spacing: .03em; }
+      .footer-love { font-size: 13px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="brand">
+        <svg class="brand-heart" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 26S4 19 4 11.5A6.5 6.5 0 0 1 16 8a6.5 6.5 0 0 1 12 3.5C28 19 16 26 16 26Z" stroke="currentColor" stroke-width="1.5"/><path d="m8 3 1-2m16 3 2-1" stroke="currentColor" stroke-linecap="round"/></svg>
+        邹小宝的生日小站
+      </div>
+      <span class="header-note">a little world of love.</span>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="birthday-title">
+        <div class="hero-copy">
+          <p class="eyebrow">ONE YEAR OF LITTLE WONDERS</p>
+          <h1 id="birthday-title">祝邹小宝<br><span>生日快乐</span></h1>
+          <p class="birthday">一岁啦，我们的小太阳！
+            <svg class="cake-icon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M8 23h24v12H8zM6 35h28M12 23v-6h16v6M20 17v-5M13 26c2 4 5 4 7 0 2 4 5 4 7 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 10c-5-1-1-7 0-8 2 3 5 7 0 8Z" fill="#dab775"/></svg>
+          </p>
+          <p class="intro">谢谢你来到我们的世界，<br>把每个平凡的日子，都变成了礼物。</p>
+          <p class="birthday-note">一岁一礼，一寸欢喜。<br>愿你慢慢长大，愿爱一直都在。</p>
+        </div>
+
+        <div class="album" aria-label="宝宝的两张成长照片">
+          <svg class="sparkle" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M20 2c0 13-5 18-18 18 13 0 18 5 18 18 0-13 5-18 18-18C25 20 20 15 20 2Z" stroke="currentColor" stroke-width="1.4"/></svg>
+          <div class="photos">
+            <figure class="polaroid">
+              <div class="photo-frame">
+                <img src="/images/1.jpg" alt="宝宝坐在爬行垫上，露出开心的笑容" width="1368" height="1824" fetchpriority="high">
+              </div>
+              <figcaption>你一笑，世界就亮了 <span class="photo-number">01</span></figcaption>
+            </figure>
+            <figure class="polaroid">
+              <div class="photo-frame">
+                <img src="/images/2.jpg" alt="宝宝在家人的怀抱中，笑着探索户外的世界" width="1368" height="1824">
+              </div>
+              <figcaption>被爱抱满的小日子 <span class="photo-number">02</span></figcaption>
+            </figure>
+          </div>
+          <svg class="flower" viewBox="0 0 80 80" aria-hidden="true"><g fill="#f5ecd5" stroke="#cbbb91" stroke-width="1"><ellipse cx="40" cy="24" rx="10" ry="20"/><ellipse cx="40" cy="24" rx="10" ry="20" transform="rotate(60 40 40)"/><ellipse cx="40" cy="24" rx="10" ry="20" transform="rotate(120 40 40)"/><ellipse cx="40" cy="24" rx="10" ry="20" transform="rotate(180 40 40)"/><ellipse cx="40" cy="24" rx="10" ry="20" transform="rotate(240 40 40)"/><ellipse cx="40" cy="24" rx="10" ry="20" transform="rotate(300 40 40)"/></g><circle cx="40" cy="40" r="12" fill="#d6b16e"/><circle cx="36" cy="38" r="1.5" fill="#80663f"/><circle cx="44" cy="38" r="1.5" fill="#80663f"/><path d="M36 43q4 4 8 0" fill="none" stroke="#80663f" stroke-linecap="round"/></svg>
+          <p class="album-note">little moments, endless love ♡</p>
+        </div>
+      </section>
+
+      <section class="video-section" aria-labelledby="video-title">
+        <div class="video-copy">
+          <p class="eyebrow">LITTLE MOMENTS IN MOTION</p>
+          <h2 id="video-title">收藏你的<br>每一个可爱瞬间。</h2>
+          <p>把小小的动作、甜甜的笑声，<br>都留在这一岁的小小纪念里。</p>
+          <p class="letter-subtitle">press play, keep the joy.</p>
+        </div>
+        <figure class="video-frame">
+          <video controls playsinline preload="metadata" aria-label="邹小宝的成长纪念视频">
+            <source src="/images/3.MP4?v=2" type="video/mp4">
+            你的浏览器暂不支持播放这个视频，请换用较新的浏览器。
+          </video>
+          <figcaption>会动的小美好，也值得被珍藏 ♡</figcaption>
+        </figure>
+      </section>
+
+      <div class="ribbon" aria-label="愿你平安、快乐、被爱包围">
+        <span>平安长大</span><span class="tiny-star" aria-hidden="true">✳</span>
+        <span>快乐常在</span><span class="tiny-star" aria-hidden="true">✳</span>
+        <span>被爱包围</span>
+      </div>
+
+      <section class="letter" id="letter" aria-labelledby="letter-title">
+        <div class="letter-heading">
+          <span class="letter-index" aria-hidden="true">♡</span>
+          <div>
+            <h2 id="letter-title">慢慢长大，<br>好好做你自己。</h2>
+            <p class="letter-subtitle">a little letter to our little one</p>
+          </div>
+        </div>
+        <div class="letter-body">
+          <p>亲爱的邹小宝：</p>
+          <p>你的笑声，是我们听过最好听的声音。你小小的手，牵住了我们大大的幸福。谢谢你，让这个家多了那么多柔软、热闹和惊喜。</p>
+          <p>一岁生日快乐！愿你吃得香，睡得甜，眼里装着星星，心里盛着快乐。愿你勇敢地探索这个世界，也永远有一个温暖的怀抱可以回来。</p>
+          <p><strong>不用着急长大，你只管开心，我们负责爱你。</strong><br>生日快乐，我们最珍贵的小宝贝。</p>
+          <p class="signature">—— 永远爱你的家人 ♡</p>
+        </div>
+      </section>
+    </main>
+
+    <footer><span>把成长的每一小步，都好好收藏。</span><span class="footer-love">made with all our love ♡</span></footer>
+  </div>
+</body>
+</html>
