@@ -1,0 +1,89 @@
+name: BridgeLab standalone Windows exe
+
+on:
+  push:
+    branches: [build/bridge-windows-20261028]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    env:
+      RUSTFLAGS: -C target-feature=+crt-static
+      CARGO_TERM_COLOR: never
+      CARGO_BUILD_JOBS: 4
+      CARGO_PROFILE_RELEASE_OPT_LEVEL: 2
+      CARGO_PROFILE_RELEASE_DEBUG: 0
+      CARGO_PROFILE_RELEASE_STRIP: symbols
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare Windows tools
+        shell: pwsh
+        run: |
+          rustup update stable --no-self-update
+          rustup default stable
+          $fxc = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin\*\x64\fxc.exe' | Sort-Object FullName -Descending | Select-Object -First 1
+          if (!$fxc) { throw 'Windows SDK shader compiler is missing' }
+          "GPUI_FXC_PATH=$($fxc.FullName)" >> $env:GITHUB_ENV
+          $main = 'crates/bridge_app/src/main.rs'
+          $text = Get-Content $main -Raw
+          if (!$text.Contains('windows_subsystem')) {
+            [IO.File]::WriteAllText((Join-Path $PWD $main), "#![cfg_attr(target_os = `"windows`", windows_subsystem = `"windows`")]`n`n" + $text)
+          }
+          rustc --version
+          Write-Output "Shader compiler: $($fxc.FullName)"
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: bridge-windows-static
+      - name: Build standalone release
+        shell: pwsh
+        run: cargo build --locked --release --target x86_64-pc-windows-msvc -p bridge-app
+      - name: Check DLL imports and package exe
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item target/x86_64-pc-windows-msvc/release/bridge-app.exe dist/BridgeLab.exe
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+          $vs = & $vswhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          $dumpbin = Get-ChildItem "$vs\VC\Tools\MSVC\*\bin\Hostx64\x64\dumpbin.exe" | Sort-Object FullName -Descending | Select-Object -First 1
+          if (!$dumpbin) { throw 'dumpbin not found' }
+          $imports = & $dumpbin.FullName /DEPENDENTS dist/BridgeLab.exe | Out-String
+          $imports | Set-Content dist/BridgeLab-dependencies.txt
+          Write-Output $imports
+          $dlls = [regex]::Matches($imports, '(?im)^\s+([a-z0-9_.-]+\.dll)\s*$') | ForEach-Object { $_.Groups[1].Value }
+          if (!$dlls) { throw 'No DLL imports were detected' }
+          foreach ($dll in $dlls) {
+            if ($dll -match '^(vcruntime|msvcp|concrt|libgcc|libstdc\+\+|libwinpthread)' -or !(Test-Path (Join-Path $env:SystemRoot "System32\$dll"))) {
+              throw "External runtime DLL dependency: $dll"
+            }
+          }
+          & $dumpbin.FullName /HEADERS dist/BridgeLab.exe | Select-String 'subsystem|machine'
+          Get-Item dist/BridgeLab.exe | Select-Object Name, Length
+          Get-FileHash dist/BridgeLab.exe -Algorithm SHA256 | Format-List
+      - name: Verify GUI starts from exe alone
+        shell: pwsh
+        run: |
+          $isolated = Join-Path $env:RUNNER_TEMP 'BridgeLab-portable-check'
+          New-Item -ItemType Directory -Force $isolated | Out-Null
+          Copy-Item dist/BridgeLab.exe $isolated
+          $process = Start-Process (Join-Path $isolated 'BridgeLab.exe') -WorkingDirectory $isolated -PassThru -RedirectStandardOutput "$isolated\stdout.txt" -RedirectStandardError "$isolated\stderr.txt"
+          Start-Sleep -Seconds 12
+          $process.Refresh()
+          if ($process.HasExited) {
+            Get-Content "$isolated\stderr.txt" -ErrorAction SilentlyContinue
+            throw "BridgeLab exited during standalone startup with code $($process.ExitCode)"
+          }
+          Write-Output "Standalone startup passed; pid=$($process.Id), window=$($process.MainWindowHandle), title=$($process.MainWindowTitle)"
+          if ($process.MainWindowHandle -eq 0) { throw 'BridgeLab did not create a GUI window' }
+          Stop-Process -Id $process.Id
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: BridgeLab-Windows-x64
+          path: dist/BridgeLab.exe
+          if-no-files-found: ignore
+          retention-days: 7
