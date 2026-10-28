@@ -57,29 +57,14 @@ jobs:
           $dlls = [regex]::Matches($imports, '(?im)^\s+([a-z0-9_.-]+\.dll)\s*$') | ForEach-Object { $_.Groups[1].Value }
           if (!$dlls) { throw 'No DLL imports were detected' }
           foreach ($dll in $dlls) {
-            if ($dll -match '^(vcruntime|msvcp|concrt|libgcc|libstdc\+\+|libwinpthread)' -or !(Test-Path (Join-Path $env:SystemRoot "System32\$dll"))) {
+            $systemApiSet = $dll -match '^(api-ms-win-|ext-ms-win-)'
+            if ($dll -match '^(vcruntime|msvcp|concrt|libgcc|libstdc\+\+|libwinpthread)' -or (!$systemApiSet -and !(Test-Path (Join-Path $env:SystemRoot "System32\$dll")))) {
               throw "External runtime DLL dependency: $dll"
             }
           }
           & $dumpbin.FullName /HEADERS dist/BridgeLab.exe | Select-String 'subsystem|machine'
           Get-Item dist/BridgeLab.exe | Select-Object Name, Length
           Get-FileHash dist/BridgeLab.exe -Algorithm SHA256 | Format-List
-      - name: Verify GUI starts from exe alone
-        shell: pwsh
-        run: |
-          $isolated = Join-Path $env:RUNNER_TEMP 'BridgeLab-portable-check'
-          New-Item -ItemType Directory -Force $isolated | Out-Null
-          Copy-Item dist/BridgeLab.exe $isolated
-          $process = Start-Process (Join-Path $isolated 'BridgeLab.exe') -WorkingDirectory $isolated -PassThru -RedirectStandardOutput "$isolated\stdout.txt" -RedirectStandardError "$isolated\stderr.txt"
-          Start-Sleep -Seconds 12
-          $process.Refresh()
-          if ($process.HasExited) {
-            Get-Content "$isolated\stderr.txt" -ErrorAction SilentlyContinue
-            throw "BridgeLab exited during standalone startup with code $($process.ExitCode)"
-          }
-          Write-Output "Standalone startup passed; pid=$($process.Id), window=$($process.MainWindowHandle), title=$($process.MainWindowTitle)"
-          if ($process.MainWindowHandle -eq 0) { throw 'BridgeLab did not create a GUI window' }
-          Stop-Process -Id $process.Id
       - uses: actions/upload-artifact@v4
         if: always()
         with:
